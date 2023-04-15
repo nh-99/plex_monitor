@@ -1,10 +1,10 @@
-package models
+package database
 
 import (
 	"database/sql"
 	"log"
 	"time"
-	
+
 	_ "github.com/go-sql-driver/mysql"
 )
 
@@ -18,9 +18,9 @@ func InitDB(dataSourceName string) {
 	}
 
 	pingErr := DB.Ping()
-    if pingErr != nil {
-        log.Fatal(pingErr)
-    }
+	if pingErr != nil {
+		log.Fatal(pingErr)
+	}
 
 	// Set important connection params
 	DB.SetConnMaxLifetime(time.Minute * 3)

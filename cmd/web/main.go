@@ -44,7 +44,7 @@ func Routes() *chi.Mux {
 
 func main() {
 	router := Routes()
-	models.InitDB(os.Getenv("DATABASE_URL"))
+	database.InitDB(os.Getenv("DATABASE_URL"))
 
 	log.Printf("Starting Plex Monitor Web...")
 
