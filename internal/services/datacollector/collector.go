@@ -12,7 +12,7 @@ type Database interface {
 // Handles collecting and storing data in the database from various external service providers.
 type DataCollectorRepository interface {
 	collect() error
-	store(db Database) error
+	store() error
 }
 
 // Executes the functions for data collection & storage.
@@ -41,7 +41,7 @@ func (s *DataCollectionService) Execute(ctx context.Context) error {
 	}
 
 	// Run the store method to store the repository to the database
-	err = s.repository.store(s.database)
+	err = s.repository.store()
 	if err != nil {
 		return err
 	}

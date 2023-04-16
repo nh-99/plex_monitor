@@ -142,10 +142,10 @@ func GetAnonymousUser() User {
 	return u
 }
 
-func CommitUser(u User) error {
+func (u User) Commit() error {
 	var err error
 
-	SQL := `INSERT INTO users(bin_to_uuid(id) as id, email, password, created_at) VALUES($1, $2, $3, $4, $5);`
+	SQL := `INSERT INTO users(id, email, password, created_at) VALUES(uuid_to_bin($1), $2, $3, $4, $5);`
 
 	_, err = database.DB.Exec(SQL, u.ID, u.Email, u.HashedPassword, u.CreatedAt)
 	if err != nil {
