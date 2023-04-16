@@ -1,33 +1,29 @@
 package datacollector
 
 import (
+	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"net/http"
 	"net/url"
 	"plex_monitor/internal/database/models"
 	"time"
 )
 
+type sonarrTvSeries struct {
+	Title    string `json:"title"`
+	Count    int    `json:"seasonCount"`
+	Overview string `json:"overview"`
+	AirTime  string `json:"airTime"`
+}
+
 type sonarrTvShow struct {
-	absoluteEpisodeNumber      int
-	airDate                    string
-	airDateUtc                 string
-	episodeFile                []string
-	episodeFileId              int
-	episodeNumber              int
-	hasFile                    bool
-	id                         int
-	lastSearchTime             string
-	monitored                  bool
-	overview                   string
-	sceneAbsoluteEpisodeNumber int
-	sceneEpisodeNumber         int
-	sceneSeasonNumber          int
-	seasonNumber               int
-	series                     []string
-	seriesId                   int
-	title                      string
-	unverifiedSceneNumbering   bool
+	AirDate       string         `json:"air_date"`
+	EpisodeNumber int            `json:"episodeNumber"`
+	Id            int            `json:"id"`
+	SeasonNumber  int            `json:"seasonNumber"`
+	Title         string         `json:"title"`
+	Series        sonarrTvSeries `json:"series"`
 }
 
 type SonarrCalendar struct {
@@ -74,16 +70,31 @@ func (s SonarrCalendar) collect() error {
 	// Add API key header
 	req.Header.Add("X-Api-Key", serviceConfig.ApiKey)
 
+	// Do the HTTP request
 	resp, err := httpClient.Do(req)
 	if err != nil {
 		return err
 	}
 
-	fmt.Println(resp)
+	// Close the request
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return err
+	}
 
-	// Process response into sonarrTvShow's
-	// TODO:
+	// Unmarshal the JSON response into the tvShows variable on the dependency
+	err = json.Unmarshal(body, &s.tvShows)
+	if err != nil {
+		return err
+	}
 
+	// Print out shows
+	for _, show := range s.tvShows {
+		fmt.Printf("%s - %s (S%dE%d)\n", show.Series.Title, show.Title, show.SeasonNumber, show.EpisodeNumber)
+	}
+
+	// No errors 🤠
 	return nil
 }
 
