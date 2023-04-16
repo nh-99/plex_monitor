@@ -12,7 +12,6 @@ type MySQLDatabase struct {
 
 func (mysqlDb MySQLDatabase) connect() error {
 	database.InitDB(os.Getenv("DATABASE_URL"))
-	mysqlDb.db = database.DB
 
 	return nil
 }

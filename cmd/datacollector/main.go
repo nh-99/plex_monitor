@@ -6,16 +6,11 @@ import (
 	"plex_monitor/internal/services/datacollector"
 )
 
-const (
-	SONARR_QUEUE    = "sonarrQueue"
-	SONARR_CALENDAR = "sonarrCalendar"
-)
-
 func getDataCollectorRepositoryFromServiceName(svcName string) datacollector.DataCollectorRepository {
 	switch svcName {
-	case SONARR_QUEUE:
+	case datacollector.SONARR_QUEUE:
 		return &datacollector.SonarrQueue{}
-	case SONARR_CALENDAR:
+	case datacollector.SONARR_CALENDAR:
 		return &datacollector.SonarrCalendar{}
 	default:
 		return nil
@@ -23,7 +18,7 @@ func getDataCollectorRepositoryFromServiceName(svcName string) datacollector.Dat
 }
 
 func main() {
-	var availableServices = []string{SONARR_QUEUE, SONARR_CALENDAR}
+	var availableServices = []string{datacollector.SONARR_QUEUE, datacollector.SONARR_CALENDAR}
 
 	// TODO: Go through for loop of all services and create collector service for each
 	for _, serviceName := range availableServices {

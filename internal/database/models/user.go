@@ -23,7 +23,7 @@ type User struct {
 	CreatedBy      utils.NullString `json:"created_by"`
 	UpdatedAt      time.Time        `json:"updated_at"`
 	UpdatedBy      utils.NullString `json:"updated_by"`
-	DeletedAt      utils.NullTime        `json:"deleted_at"`
+	DeletedAt      utils.NullTime   `json:"deleted_at"`
 	DeletedBy      utils.NullString `json:"deleted_by"`
 }
 
@@ -33,10 +33,10 @@ func GetUser(email string, id string) (User, error) {
 	SQL := ``
 	var querySubstitution string
 	if email != "" {
-		SQL = `SELECT bin_to_uuid(id) as id, email, password, activated, created_at, created_by, updated_at, updated_by, deleted_at, deleted_by FROM users WHERE email = ? AND activated = true;`
+		SQL = `SELECT bin_to_uuid(id) as id, email, password, activated, created_at, created_by, updated_at, updated_by, deleted_at, deleted_by FROM users WHERE email = ? AND activated = true AND deleted_at IS NOT NULL;`
 		querySubstitution = email
 	} else {
-		SQL = `SELECT bin_to_uuid(id) as id, email, password, activated, created_at, created_by, updated_at, updated_by, deleted_at, deleted_by FROM users WHERE id = ? AND activated = true;`
+		SQL = `SELECT bin_to_uuid(id) as id, email, password, activated, created_at, created_by, updated_at, updated_by, deleted_at, deleted_by FROM users WHERE id = ? AND activated = true AND deleted_at IS NOT NULL;`
 		querySubstitution = id
 	}
 
@@ -69,7 +69,7 @@ func HardDeleteUser(email string, areYouSure bool) (bool, User, error) {
 		return false, user, nil
 	}
 
-	SQL := `DELETE FROM users WHERE email = $1 RETURNING bin_to_uuid(id) as id, email, password, activated, created_at, created_by, updated_at, updated_by, deleted_at, deleted_by;`
+	SQL := `DELETE FROM users WHERE email = ? RETURNING bin_to_uuid(id) as id, email, password, activated, created_at, created_by, updated_at, updated_by, deleted_at, deleted_by;`
 
 	err2 := database.DB.QueryRow(SQL, user.Email).Scan(
 		&user.ID,
