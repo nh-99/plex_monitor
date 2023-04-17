@@ -6,7 +6,7 @@ import (
 
 // Creates the connection to the database for storage.
 type Database interface {
-	connect() error
+	Connect() error
 }
 
 // Handles collecting and storing data in the database from various external service providers.
@@ -31,9 +31,6 @@ func NewDataCollectionService(db Database, repo DataCollectorRepository) *DataCo
 
 // Run the data collection & storage.
 func (s *DataCollectionService) Execute(ctx context.Context) error {
-	// Connect the database
-	s.database.connect()
-
 	// Run the collect method to populate the repository
 	err := s.repository.collect()
 	if err != nil {

@@ -77,7 +77,7 @@ func (s *SonarrCalendar) collect() error {
 	}
 
 	// Add API key header
-	req.Header.Add("X-Api-Key", serviceConfig.ApiKey)
+	req.Header.Add("X-Api-Key", serviceConfig.ApiKey.String)
 
 	// Do the HTTP request
 	resp, err := httpClient.Do(req)
@@ -165,7 +165,7 @@ func (s *SonarrQueue) collect() error {
 	}
 
 	// Add API key header
-	req.Header.Add("X-Api-Key", serviceConfig.ApiKey)
+	req.Header.Add("X-Api-Key", serviceConfig.ApiKey.String)
 
 	// Do the HTTP request
 	resp, err := httpClient.Do(req)

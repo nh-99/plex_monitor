@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"plex_monitor/internal/database/models"
 	"plex_monitor/internal/services/datacollector"
 )
 
@@ -12,22 +13,33 @@ func getDataCollectorRepositoryFromServiceName(svcName string) datacollector.Dat
 		return &datacollector.SonarrQueue{}
 	case datacollector.REPOSITORY_SONARR_CALENDAR:
 		return &datacollector.SonarrCalendar{}
+	case datacollector.REPOSITORY_TRANSMISSION:
+		return &datacollector.Transmission{}
 	default:
 		return nil
 	}
 }
 
 func main() {
-	var availableServices = []string{datacollector.REPOSITORY_SONARR_QUEUE, datacollector.REPOSITORY_SONARR_CALENDAR}
+	database := datacollector.MySQLDatabase{}
+	// Connect the database
+	err := database.Connect()
+	if err != nil {
+		panic(err)
+	}
+
+	availableServices, err := models.GetScannableMonitoredServices()
+	if err != nil {
+		panic(err)
+	}
 
 	// TODO: Go through for loop of all services and create collector service for each
-	for _, serviceName := range availableServices {
+	for _, service := range availableServices {
 		// Declare dependencies
-		database := datacollector.MySQLDatabase{}
-		dataCollector := getDataCollectorRepositoryFromServiceName(serviceName)
+		dataCollector := getDataCollectorRepositoryFromServiceName(service.Identifier)
 
 		if dataCollector == nil {
-			fmt.Printf("\n[plex_monitor] Invalid data collector %s\n", serviceName)
+			panic(fmt.Sprintf("\n[plex_monitor] Invalid data collector %s\n", service.Identifier))
 		}
 
 		// Create service

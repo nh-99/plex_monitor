@@ -1,6 +1,7 @@
 package models
 
 import (
+	"database/sql"
 	database "plex_monitor/internal/database"
 	"plex_monitor/internal/utils"
 	"time"
@@ -14,17 +15,17 @@ const (
 )
 
 type User struct {
-	ID             string           `json:"id"`
-	Email          string           `json:"email" validate:"^[0-9a-z]+@[0-9a-z]+(\\.[0-9a-z]+)+$"`
-	Password       []byte           `json:"-"`
-	HashedPassword []byte           `json:"-"`
-	Activated      bool             `json:"activated"`
-	CreatedAt      time.Time        `json:"created_at"`
-	CreatedBy      utils.NullString `json:"created_by"`
-	UpdatedAt      time.Time        `json:"updated_at"`
-	UpdatedBy      utils.NullString `json:"updated_by"`
-	DeletedAt      utils.NullTime   `json:"deleted_at"`
-	DeletedBy      utils.NullString `json:"deleted_by"`
+	ID             string         `json:"id"`
+	Email          string         `json:"email" validate:"^[0-9a-z]+@[0-9a-z]+(\\.[0-9a-z]+)+$"`
+	Password       []byte         `json:"-"`
+	HashedPassword []byte         `json:"-"`
+	Activated      bool           `json:"activated"`
+	CreatedAt      time.Time      `json:"created_at"`
+	CreatedBy      sql.NullString `json:"created_by"`
+	UpdatedAt      time.Time      `json:"updated_at"`
+	UpdatedBy      sql.NullString `json:"updated_by"`
+	DeletedAt      utils.NullTime `json:"deleted_at"`
+	DeletedBy      sql.NullString `json:"deleted_by"`
 }
 
 func GetUser(email string, id string) (User, error) {

@@ -1,16 +1,13 @@
 package datacollector
 
 import (
-	"database/sql"
 	"os"
 	"plex_monitor/internal/database"
 )
 
-type MySQLDatabase struct {
-	db *sql.DB
-}
+type MySQLDatabase struct{}
 
-func (mysqlDb MySQLDatabase) connect() error {
+func (mysqlDb MySQLDatabase) Connect() error {
 	database.InitDB(os.Getenv("DATABASE_URL"))
 
 	return nil
