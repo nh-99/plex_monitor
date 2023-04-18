@@ -41,6 +41,7 @@ type Transmission struct {
 	torrents     []torrent
 }
 
+// Collect the data from Transmission and parse the response.
 func (t *Transmission) collect() error {
 	serviceConfig, err := models.GetMonitoredService(REPOSITORY_TRANSMISSION)
 	if err != nil {
@@ -143,6 +144,7 @@ func (t *Transmission) collect() error {
 	return nil
 }
 
+// Store the data from Transmission in the database.
 func (t *Transmission) store() error {
 	for _, torrent := range t.torrents {
 		serviceTransmissionData, _ := models.GetServiceTransmissionDataByName(torrent.Name)

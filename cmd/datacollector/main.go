@@ -33,7 +33,6 @@ func main() {
 		panic(err)
 	}
 
-	// TODO: Go through for loop of all services and create collector service for each
 	for _, service := range availableServices {
 		// Declare dependencies
 		dataCollector := getDataCollectorRepositoryFromServiceName(service.Identifier)

@@ -43,6 +43,7 @@ type SonarrQueue struct {
 	tvShows []sonarrTvShow
 }
 
+// Collect the data from Sonarrs calendar endpoint.
 func (s *SonarrCalendar) collect() error {
 	serviceConfig, err := models.GetMonitoredService(REPOSITORY_SONARR_CALENDAR)
 	if err != nil {
@@ -115,6 +116,7 @@ func (s *SonarrCalendar) collect() error {
 	return nil
 }
 
+// Store the Sonarr calendar data.
 func (s *SonarrCalendar) store() error {
 	for _, show := range s.tvShows {
 		serviceSonarrData := models.ServiceSonarrData{
@@ -143,6 +145,7 @@ func (s *SonarrCalendar) store() error {
 	return nil
 }
 
+// Collect the data from Sonarr's queue endpoint.
 func (s *SonarrQueue) collect() error {
 	serviceConfig, err := models.GetMonitoredService(REPOSITORY_SONARR_QUEUE)
 	if err != nil {
@@ -201,6 +204,7 @@ func (s *SonarrQueue) collect() error {
 	return nil
 }
 
+// Store Sonarr's queue data in the database.
 func (s *SonarrQueue) store() error {
 	for _, show := range s.tvShows {
 		serviceSonarrData := models.ServiceSonarrData{
