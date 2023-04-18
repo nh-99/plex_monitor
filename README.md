@@ -11,3 +11,6 @@ The worker is made to make requests to various services, grab data from them, fo
 
 # Environment Variables
 The `DATABASE_URL` and `SECRET_KEY` environment variables must be set. The database URL is just the typical connection string for a MySQL database in Golang, which looks like `user:pass@tcp(127.0.0.1)/database_name?parseTime=true`. Secret key should be set specifically for your environment.
+
+# Database
+The database used for this is MySQL 8. You must setup a database and import the `database/schema.sql` file into it. It will setup the initial table structure. To add services to monitor you'll need to add rows to the `monitored_services` table.
