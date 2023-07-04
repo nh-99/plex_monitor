@@ -32,6 +32,10 @@ func Routes() *chi.Mux {
 
 		r.Mount("/users", user.Routes())
 		r.Mount("/webhook", webhook.Routes())
+
+		r.Get("/heartbeat", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			w.Write([]byte("OK"))
+		}))
 	})
 
 	return router

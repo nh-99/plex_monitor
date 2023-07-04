@@ -24,7 +24,8 @@ build-docker:
 	@echo "Building container..."
 	$(eval GIT_TAG := $(shell git rev-parse --short HEAD))
 	@echo  ----------------------------------------
-	@echo   Git tag is: $(GIT_TAG), adding this to hex file now:
+	@echo   Git tag is: $(GIT_TAG), tagging container version
+	@echo  ----------------------------------------
 	@docker build -t plex-monitor:latest .
 	@docker build -t plex-monitor:$(GIT_TAG) .
 
