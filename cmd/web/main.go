@@ -8,8 +8,7 @@ import (
 
 	"plex_monitor/internal/database"
 	"plex_monitor/internal/web/api/controllers/user"
-	"plex_monitor/internal/web/interface/controllers/dashboard"
-	"plex_monitor/internal/web/interface/controllers/static"
+	"plex_monitor/internal/web/api/controllers/webhook"
 
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
@@ -32,11 +31,7 @@ func Routes() *chi.Mux {
 		)
 
 		r.Mount("/users", user.Routes())
-	})
-
-	router.Route("/", func(r chi.Router) {
-		r.Mount("/", dashboard.Routes())
-		r.Mount("/static", static.Routes())
+		r.Mount("/webhook", webhook.Routes())
 	})
 
 	return router

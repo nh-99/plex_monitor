@@ -1,10 +1,10 @@
 package user
 
 import (
-	"plex_monitor/internal/database/models"
 	"encoding/json"
 	"net/http"
 	"os"
+	"plex_monitor/internal/database/models"
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
@@ -39,7 +39,7 @@ func PerformLogin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user, err := models.GetUser(loginRequest.Email, "")
+	user, err := models.GetUser("", loginRequest.Email)
 	if err != nil {
 		http.Error(w, "Incorrect username or password", http.StatusBadRequest)
 		return

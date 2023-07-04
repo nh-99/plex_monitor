@@ -1,15 +1,14 @@
-package main
+package cli
 
 import (
 	"bufio"
 	"fmt"
 	"os"
-	"plex_monitor/internal/utils"
 	"strings"
 	"syscall"
 )
 
-func getPassword(prompt string) string {
+func GetPassword(prompt string) string {
 	fmt.Print(prompt)
 
 	// Common settings and variables for both stty calls.
@@ -58,11 +57,4 @@ func getPassword(prompt string) string {
 	}
 
 	return strings.TrimSpace(text)
-}
-
-func main() {
-	password := getPassword("[plex_monitor] Please enter a password: ")
-	hashBytes, _ := utils.HashString(password)
-	s := string(hashBytes)
-	fmt.Printf("\n[plex_monitor] ====================Hashed password====================\n%s\n", s)
 }

@@ -1,29 +1,28 @@
 package database
 
 import (
-	"database/sql"
+	"context"
 	"log"
-	"time"
 
 	_ "github.com/go-sql-driver/mysql"
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
+	"go.mongodb.org/mongo-driver/mongo/readpref"
 )
 
-var DB *sql.DB
+var DB *mongo.Database
 
 func InitDB(dataSourceName string) {
 	var err error
-	DB, err = sql.Open("mysql", dataSourceName)
+	client, err := mongo.Connect(context.TODO(), options.Client().ApplyURI(dataSourceName))
 	if err != nil {
 		log.Panic(err)
 	}
 
-	pingErr := DB.Ping()
+	pingErr := client.Ping(context.TODO(), readpref.PrimaryPreferred())
 	if pingErr != nil {
 		log.Fatal(pingErr)
 	}
 
-	// Set important connection params
-	DB.SetConnMaxLifetime(time.Minute * 3)
-	DB.SetMaxOpenConns(10)
-	DB.SetMaxIdleConns(10)
+	DB = client.Database("plex_monitor")
 }
