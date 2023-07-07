@@ -15,7 +15,7 @@ func Routes() *chi.Mux {
 		// Seek, verify and validate JWT tokens
 		r.Use(basicAuth)
 
-		// Custom middleware for X to add user to request context, for easy access
+		// Custom middleware to add user to request context, for easy access
 		r.Use(middleware.CreateUserContext)
 
 		r.Post("/", WebhookEntry)

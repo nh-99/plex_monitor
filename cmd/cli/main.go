@@ -1,14 +1,22 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"os"
 	"time"
+
+	pmcli "plex_monitor/internal/cli"
+	"plex_monitor/internal/database"
+	"plex_monitor/internal/database/models"
+	"plex_monitor/internal/utils"
 
 	"github.com/urfave/cli/v2"
 )
 
 func main() {
+	database.InitDB(os.Getenv("DATABASE_URL"))
+
 	app := &cli.App{
 		Name:     "Plex Monitor",
 		Version:  "v1",
@@ -48,8 +56,24 @@ func main() {
 						Name:    "user",
 						Aliases: []string{"u"},
 						Usage:   "Configure a new user in the system",
+						Flags: []cli.Flag{
+							&cli.StringFlag{Name: "email"},
+						},
 						Action: func(cCtx *cli.Context) error {
-							fmt.Println("added task: ", cCtx.Args().First())
+							email := cCtx.String("email")
+							password := pmcli.GetPassword("Enter a password: ")
+							hashBytes, _ := utils.HashString(password)
+							s := utils.BytesToString(hashBytes)
+							_, err := database.DB.Collection("users").InsertOne(context.TODO(), models.User{
+								Email:          email,
+								HashedPassword: s,
+								Activated:      true,
+								CreatedAt:      time.Now(),
+								UpdatedAt:      time.Now(),
+							})
+							if err != nil {
+								panic(err)
+							}
 							return nil
 						},
 					},

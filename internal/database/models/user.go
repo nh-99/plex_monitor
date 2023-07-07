@@ -18,7 +18,7 @@ type User struct {
 	ID             string         `bson:"id"`
 	Email          string         `bson:"email"`
 	Password       []byte         `bson:"-"`
-	HashedPassword []byte         `bson:"password"`
+	HashedPassword string         `bson:"password"`
 	Activated      bool           `bson:"activated"`
 	CreatedAt      time.Time      `bson:"created_at"`
 	CreatedBy      string         `bson:"created_by"`
@@ -56,12 +56,5 @@ func GetUser(id string, email string) (User, error) {
 
 // CheckPassword checks that the supplied password and the hashed password in the database match.
 func (u User) CheckPassword(password string) bool {
-	hashedPasswordString := utils.BytesToString(u.HashedPassword)
-	return utils.CompareStringToHash(password, hashedPasswordString)
-}
-
-func hashedPassword(password string) []byte {
-	hashedpass, _ := utils.HashString(password)
-
-	return hashedpass
+	return utils.CompareStringToHash(password, u.HashedPassword)
 }

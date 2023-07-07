@@ -7,6 +7,7 @@ import (
 	"os"
 
 	"plex_monitor/internal/database"
+	"plex_monitor/internal/web/api/controllers/firehose"
 	"plex_monitor/internal/web/api/controllers/user"
 	"plex_monitor/internal/web/api/controllers/webhook"
 
@@ -30,6 +31,7 @@ func Routes() *chi.Mux {
 			render.SetContentType(render.ContentTypeJSON), // Set content-Type headers as application/json
 		)
 
+		r.Mount("/firehose", firehose.Routes())
 		r.Mount("/users", user.Routes())
 		r.Mount("/webhook", webhook.Routes())
 
