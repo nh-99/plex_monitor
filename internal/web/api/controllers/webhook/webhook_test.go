@@ -3,7 +3,6 @@ package webhook
 import (
 	"bytes"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
 	"os"
@@ -73,12 +72,12 @@ func TestWebhookWithPlexService(t *testing.T) {
 	assert.NoError(t, err)
 	defer file.Close()
 	// Read the file contents
-	contents, err := ioutil.ReadAll(file)
+	contents, err := io.ReadAll(file)
 	assert.NoError(t, err)
 	// Convert byte slice to string
 	jsonString := string(contents)
 
-	req.Body = ioutil.NopCloser(bytes.NewBufferString(jsonString))
+	req.Body = io.NopCloser(bytes.NewBufferString(jsonString))
 
 	// We create a ResponseRecorder (which satisfies http.ResponseWriter) to record the response.
 	rr := httptest.NewRecorder()
@@ -122,12 +121,12 @@ func TestWebhookWithSonarrService(t *testing.T) {
 	assert.NoError(t, err)
 	defer file.Close()
 	// Read the file contents
-	contents, err := ioutil.ReadAll(file)
+	contents, err := io.ReadAll(file)
 	assert.NoError(t, err)
 	// Convert byte slice to string
 	jsonString := string(contents)
 
-	req.Body = ioutil.NopCloser(bytes.NewBufferString(jsonString))
+	req.Body = io.NopCloser(bytes.NewBufferString(jsonString))
 
 	// We create a ResponseRecorder (which satisfies http.ResponseWriter) to record the response.
 	rr := httptest.NewRecorder()
@@ -168,12 +167,12 @@ func TestWebhookWithRadarrService(t *testing.T) {
 	assert.NoError(t, err)
 	defer file.Close()
 	// Read the file contents
-	contents, err := ioutil.ReadAll(file)
+	contents, err := io.ReadAll(file)
 	assert.NoError(t, err)
 	// Convert byte slice to string
 	jsonString := string(contents)
 
-	req.Body = ioutil.NopCloser(bytes.NewBufferString(jsonString))
+	req.Body = io.NopCloser(bytes.NewBufferString(jsonString))
 
 	// We create a ResponseRecorder (which satisfies http.ResponseWriter) to record the response.
 	rr := httptest.NewRecorder()
@@ -214,12 +213,12 @@ func TestWebhookWithOmbiService(t *testing.T) {
 	assert.NoError(t, err)
 	defer file.Close()
 	// Read the file contents
-	contents, err := ioutil.ReadAll(file)
+	contents, err := io.ReadAll(file)
 	assert.NoError(t, err)
 	// Convert byte slice to string
 	jsonString := string(contents)
 
-	req.Body = ioutil.NopCloser(bytes.NewBufferString(jsonString))
+	req.Body = io.NopCloser(bytes.NewBufferString(jsonString))
 
 	// We create a ResponseRecorder (which satisfies http.ResponseWriter) to record the response.
 	rr := httptest.NewRecorder()
