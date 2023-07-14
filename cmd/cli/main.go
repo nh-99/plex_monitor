@@ -62,7 +62,7 @@ func main() {
 							email := cCtx.String("email")
 							password := pmcli.GetPassword("Enter a password: ")
 							hashBytes, _ := utils.HashString(password)
-							s := utils.BytesToString(hashBytes)
+							s := string(hashBytes)
 							_, err := database.DB.Collection("users").InsertOne(database.Ctx, models.User{
 								Email:          email,
 								HashedPassword: s,

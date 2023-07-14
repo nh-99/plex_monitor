@@ -3,7 +3,7 @@ package webhook
 import (
 	"bytes"
 	"context"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"plex_monitor/internal/database"
 	"plex_monitor/internal/web/api"
@@ -35,7 +35,7 @@ func WebhookEntry(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Get the body data as a string for reuse
-	requestData, err := ioutil.ReadAll(r.Body)
+	requestData, err := io.ReadAll(r.Body)
 	if err != nil {
 		api.RenderError("Unable to read request body", l, w, r, err)
 		return
@@ -55,7 +55,7 @@ func WebhookEntry(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Re-construct the body data so we can re-use it & fire the hook
-	r.Body = ioutil.NopCloser(bytes.NewReader(requestData))
+	r.Body = io.NopCloser(bytes.NewReader(requestData))
 	monitoringService.fireHooks(l, w, r)
 
 	// Hooks successfully fired, return response
