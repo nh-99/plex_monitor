@@ -1,5 +1,10 @@
 package models
 
+import (
+	"encoding/json"
+	"net/http"
+)
+
 type PlexWebhookData struct {
 	Event   string `bson:"event"`
 	User    bool   `bson:"user"`
@@ -45,4 +50,24 @@ type PlexWebhookData struct {
 		AddedAt              int    `bson:"addedAt"`
 		UpdatedAt            int    `bson:"updatedAt"`
 	} `bson:"Metadata"`
+}
+
+func (p *PlexWebhookData) ToJSON() ([]byte, error) {
+	return json.Marshal(p)
+}
+
+func (p *PlexWebhookData) FromJSON(data []byte) error {
+	err := json.Unmarshal(data, p)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (p *PlexWebhookData) FromHTTPRequest(r *http.Request) error {
+	err := json.NewDecoder(r.Body).Decode(p)
+	if err != nil {
+		return err
+	}
+	return nil
 }

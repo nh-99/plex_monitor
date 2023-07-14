@@ -1,5 +1,10 @@
 package models
 
+import (
+	"encoding/json"
+	"net/http"
+)
+
 type SonarrWebhookData struct {
 	Series struct {
 		ID       int    `bson:"id"`
@@ -30,4 +35,24 @@ type SonarrWebhookData struct {
 	DownloadClientType string `bson:"downloadClientType"`
 	DownloadID         string `bson:"downloadId"`
 	EventType          string `bson:"eventType"`
+}
+
+func (p *SonarrWebhookData) ToJSON() ([]byte, error) {
+	return json.Marshal(p)
+}
+
+func (p *SonarrWebhookData) FromJSON(data []byte) error {
+	err := json.Unmarshal(data, p)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (p *SonarrWebhookData) FromHTTPRequest(r *http.Request) error {
+	err := json.NewDecoder(r.Body).Decode(p)
+	if err != nil {
+		return err
+	}
+	return nil
 }

@@ -11,18 +11,23 @@ import (
 )
 
 var DB *mongo.Database
+var Ctx = context.Background()
 
-func InitDB(dataSourceName string) {
+func InitDB(dataSourceName string, dbName string) {
 	var err error
-	client, err := mongo.Connect(context.TODO(), options.Client().ApplyURI(dataSourceName))
+	client, err := mongo.Connect(Ctx, options.Client().ApplyURI(dataSourceName))
 	if err != nil {
 		logrus.Panic(err)
 	}
 
-	pingErr := client.Ping(context.TODO(), readpref.PrimaryPreferred())
+	pingErr := client.Ping(Ctx, readpref.PrimaryPreferred())
 	if pingErr != nil {
 		logrus.Fatal(pingErr)
 	}
 
-	DB = client.Database("plex_monitor")
+	DB = client.Database(dbName)
+}
+
+func CloseDB() {
+	DB.Client().Disconnect(Ctx)
 }

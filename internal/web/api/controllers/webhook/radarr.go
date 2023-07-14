@@ -1,11 +1,12 @@
 package webhook
 
 import (
-	"context"
-	"encoding/json"
 	"net/http"
 	"plex_monitor/internal/database"
 	"plex_monitor/internal/database/models"
+	"plex_monitor/internal/web/api"
+
+	"github.com/sirupsen/logrus"
 )
 
 // RadarrEventType
@@ -57,19 +58,19 @@ type RadarrWebhookRequest struct {
 type RadarrMonitoringService struct{}
 
 // RadarrWebhook is the endpoint that handles the inital request for webhooks and routes down to the service-specific func.
-func (rms RadarrMonitoringService) fire(w http.ResponseWriter, r *http.Request) {
-	radarrWebhookRequest := RadarrWebhookRequest{}
-	err := error(nil)
+func (rms RadarrMonitoringService) fire(l *logrus.Entry, w http.ResponseWriter, r *http.Request) {
+	l.Info("Firing webhook for Sonarr")
 
-	err = json.NewDecoder(r.Body).Decode(&radarrWebhookRequest)
+	radarrWebhookData := models.RadarrWebhookData{}
+	err := radarrWebhookData.FromHTTPRequest(r)
 	if err != nil {
-		http.Error(w, "Bad request data", http.StatusBadRequest)
+		api.RenderError("Could not parse data (bad request data)", l, w, r, err)
 		return
 	}
 
-	_, err = database.DB.Collection("radarr_webhook_data").InsertOne(context.TODO(), models.RadarrWebhookData{})
+	_, err = database.DB.Collection("radarr_webhook_data").InsertOne(database.Ctx, radarrWebhookData)
 	if err != nil {
-		http.Error(w, "Bad request data", http.StatusBadRequest)
+		api.RenderError("Could not store data", l, w, r, err)
 		return
 	}
 }

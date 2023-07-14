@@ -1,8 +1,13 @@
 package models
 
+import (
+	"encoding/json"
+	"net/http"
+)
+
 type RadarrWebhookData struct {
 	Movie struct {
-		ID          int    `bson:"sonarr_movie_id"`
+		ID          int    `bson:"id"`
 		Title       string `bson:"title"`
 		Year        int    `bson:"year"`
 		ReleaseDate string `bson:"releaseDate"`
@@ -37,4 +42,22 @@ type RadarrWebhookData struct {
 	EventType          string `bson:"eventType"`
 }
 
-func GetRadarrWebhookDataCollection() {}
+func (p *RadarrWebhookData) ToJSON() ([]byte, error) {
+	return json.Marshal(p)
+}
+
+func (p *RadarrWebhookData) FromJSON(data []byte) error {
+	err := json.Unmarshal(data, p)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (p *RadarrWebhookData) FromHTTPRequest(r *http.Request) error {
+	err := json.NewDecoder(r.Body).Decode(p)
+	if err != nil {
+		return err
+	}
+	return nil
+}

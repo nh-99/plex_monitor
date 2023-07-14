@@ -1,11 +1,12 @@
 package webhook
 
 import (
-	"context"
-	"encoding/json"
 	"net/http"
 	"plex_monitor/internal/database"
 	"plex_monitor/internal/database/models"
+	"plex_monitor/internal/web/api"
+
+	"github.com/sirupsen/logrus"
 )
 
 // SonarrEventType
@@ -52,19 +53,20 @@ type SonarrWebhookRequest struct {
 type SonarrMonitoringService struct{}
 
 // SonarrWebhook is the endpoint that handles the inital request for webhooks and routes down to the service-specific func.
-func (rms SonarrMonitoringService) fire(w http.ResponseWriter, r *http.Request) {
-	sonarrWebhookRequest := SonarrWebhookRequest{}
-	err := error(nil)
+func (rms SonarrMonitoringService) fire(l *logrus.Entry, w http.ResponseWriter, r *http.Request) {
+	l.Info("Firing webhook for Sonarr")
 
-	err = json.NewDecoder(r.Body).Decode(&sonarrWebhookRequest)
+	sonarrWebhookData := models.SonarrWebhookData{}
+	err := sonarrWebhookData.FromHTTPRequest(r)
+
 	if err != nil {
-		http.Error(w, "Bad request data", http.StatusBadRequest)
+		api.RenderError("Could not parse request (bad request data)", l, w, r, err)
 		return
 	}
 
-	_, err = database.DB.Collection("sonarr_webhook_data").InsertOne(context.TODO(), models.SonarrWebhookData{})
+	_, err = database.DB.Collection("sonarr_webhook_data").InsertOne(database.Ctx, sonarrWebhookData)
 	if err != nil {
-		http.Error(w, "Bad request data", http.StatusBadRequest)
+		api.RenderError("Could not store data", l, w, r, err)
 		return
 	}
 }

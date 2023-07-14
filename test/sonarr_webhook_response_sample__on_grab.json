@@ -1,0 +1,33 @@
+{
+  "series":{
+    "id":73,
+    "title":"Doctor Who",
+    "path":"/tv/tv/Doctor Who (1963)",
+    "tvdbId":76107,
+    "tvMazeId":766,
+    "imdbId":"tt0056751",
+    "type":"standard"
+  },
+  "episodes":[
+    {
+      "id":5664,
+      "episodeNumber":2,
+      "seasonNumber":16,
+      "title":"The Ribos Operation (2)",
+      "airDate":"1978-09-09",
+      "airDateUtc":"1978-09-09T16:15:00Z"
+    }
+  ],
+  "release":{
+    "quality":"DVD",
+    "qualityVersion":1,
+    "releaseGroup":"aAF",
+    "releaseTitle":"Doctor.Who.S16E02.The.Pirate.Planet.EXTRAS.DVDRip.XviD-aAF",
+    "indexer":"Nzb.su (Prowlarr)",
+    "size":864583973
+  },
+  "downloadClient":"SABnzbd - Coeus",
+  "downloadClientType":"SABnzbd",
+  "downloadId":"SABnzbd_nzo_x5g_kvk5",
+  "eventType":"Grab"
+}

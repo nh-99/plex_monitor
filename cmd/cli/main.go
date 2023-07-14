@@ -1,7 +1,6 @@
 package main
 
 import (
-	"context"
 	"fmt"
 	"os"
 	"time"
@@ -15,7 +14,7 @@ import (
 )
 
 func main() {
-	database.InitDB(os.Getenv("DATABASE_URL"))
+	database.InitDB(os.Getenv("DATABASE_URL"), os.Getenv("DATABASE_NAME"))
 
 	app := &cli.App{
 		Name:     "Plex Monitor",
@@ -64,7 +63,7 @@ func main() {
 							password := pmcli.GetPassword("Enter a password: ")
 							hashBytes, _ := utils.HashString(password)
 							s := utils.BytesToString(hashBytes)
-							_, err := database.DB.Collection("users").InsertOne(context.TODO(), models.User{
+							_, err := database.DB.Collection("users").InsertOne(database.Ctx, models.User{
 								Email:          email,
 								HashedPassword: s,
 								Activated:      true,

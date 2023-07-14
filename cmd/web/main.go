@@ -52,7 +52,7 @@ func initLogger() {
 
 func main() {
 	router := Routes()
-	database.InitDB(os.Getenv("DATABASE_URL"))
+	database.InitDB(os.Getenv("DATABASE_URL"), os.Getenv("DATABASE_NAME"))
 
 	initLogger()
 
