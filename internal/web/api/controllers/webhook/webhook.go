@@ -1,14 +1,16 @@
 package webhook
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
 	"io"
-	"log"
+	"io/ioutil"
 	"net/http"
 	"plex_monitor/internal/database"
 
 	"github.com/go-chi/render"
+	"github.com/sirupsen/logrus"
 )
 
 // WebhookResponse is the serializer for the login response
@@ -22,9 +24,23 @@ func WebhookEntry(w http.ResponseWriter, r *http.Request) {
 	webhookResponse := WebhookResponse{}
 	serviceType := r.URL.Query().Get("service")
 
+	// Get the body data as a string for reuse
+	requestData, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		// Construct the response
+		webhookResponse.Status = "error"
+		webhookResponse.Message = "Request body is empty"
+		w.WriteHeader(http.StatusBadRequest)
+		logrus.Printf("Unable to read request body: %s", err.Error())
+
+		// Return the response
+		render.JSON(w, r, webhookResponse)
+		return
+	}
+
 	// Store raw response data in mongo
 	rawResponse := make(map[string]interface{})
-	err := json.NewDecoder(r.Body).Decode(&rawResponse)
+	err = json.NewDecoder(bytes.NewReader(requestData)).Decode(&rawResponse)
 	if err != nil {
 		// Construct the response
 		webhookResponse.Status = "error"
@@ -37,10 +53,10 @@ func WebhookEntry(w http.ResponseWriter, r *http.Request) {
 			panic(err)
 		}
 		// Log the body
-		log.Printf("[plex_monitor] Invalid JSON data: %s", b)
+		logrus.Infof("[plex_monitor] Invalid JSON data: %s", b)
 
 		// Return the response
-		render.JSON(w, r, webhookResponse) // A chi router helper for serializing and returning json
+		render.JSON(w, r, webhookResponse)
 		return
 	}
 	rawResponse["service"] = serviceType
@@ -52,10 +68,13 @@ func WebhookEntry(w http.ResponseWriter, r *http.Request) {
 		webhookResponse.Status = "error"
 		webhookResponse.Message = "Invalid service"
 		w.WriteHeader(http.StatusBadRequest)
-		log.Printf("[plex_monitor] Invalid service attempted: %s", serviceType)
-		render.JSON(w, r, webhookResponse) // A chi router helper for serializing and returning json
+		logrus.Infof("[plex_monitor] Invalid service attempted: %s", serviceType)
+		render.JSON(w, r, webhookResponse)
 		return
 	}
+
+	// Re-construct the body data so we can re-use it & fire the hook
+	r.Body = ioutil.NopCloser(bytes.NewReader(requestData))
 	monitoringService.fireHooks(w, r)
 
 	// Hooks successfully fired, return response

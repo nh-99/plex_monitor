@@ -1,6 +1,9 @@
 # Plex (& co.) Monitoring
 Monitoring stack for Plex &amp; related services.
 
+# Running
+To create binaries to run for your platform, run `make`. To create a docker image, run `make build-docker`.
+
 # Features
 
 # Supported Services

@@ -6,6 +6,8 @@ import (
 	"net/http"
 	"plex_monitor/internal/database"
 	"plex_monitor/internal/database/models"
+
+	"github.com/sirupsen/logrus"
 )
 
 const (
@@ -68,12 +70,14 @@ func (pms PlexMonitoringService) fire(w http.ResponseWriter, r *http.Request) {
 
 	err = json.NewDecoder(r.Body).Decode(&plexWebhookRequest)
 	if err != nil {
+		logrus.Infof("Invalid JSON data: %s", err.Error())
 		http.Error(w, "Bad request data", http.StatusBadRequest)
 		return
 	}
 
 	_, err = database.DB.Collection("plex_webhook_data").InsertOne(context.TODO(), models.PlexWebhookData{})
 	if err != nil {
+		logrus.Infof("Unable to write to collection: %s", err.Error())
 		http.Error(w, "Bad request data", http.StatusBadRequest)
 		return
 	}

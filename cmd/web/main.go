@@ -2,7 +2,6 @@ package main
 
 import (
 	"compress/flate"
-	"log"
 	"net/http"
 	"os"
 
@@ -14,6 +13,7 @@ import (
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
 	"github.com/go-chi/render"
+	"github.com/sirupsen/logrus"
 )
 
 func Routes() *chi.Mux {
@@ -43,19 +43,28 @@ func Routes() *chi.Mux {
 	return router
 }
 
+func initLogger() {
+	logrus.SetFormatter(&logrus.JSONFormatter{})
+	logrus.SetOutput(os.Stdout)
+	logrus.SetLevel(logrus.DebugLevel)
+	logrus.SetReportCaller(true)
+}
+
 func main() {
 	router := Routes()
 	database.InitDB(os.Getenv("DATABASE_URL"))
 
-	log.Printf("Starting Plex Monitor Web...")
+	initLogger()
+
+	logrus.Info("Starting Plex Monitor Web...")
 
 	walkFunc := func(method string, route string, handler http.Handler, middlewares ...func(http.Handler) http.Handler) error {
-		log.Printf("%s %s\n", method, route) // Walk and print out all routes
+		logrus.Printf("%s %s\n", method, route) // Walk and print out all routes
 		return nil
 	}
 	if err := chi.Walk(router, walkFunc); err != nil {
-		log.Panicf("Logging err: %s\n", err.Error()) // panic if there is an error
+		logrus.Panicf("Logging err: %s\n", err.Error()) // panic if there is an error
 	}
 
-	log.Fatal(http.ListenAndServe(":8080", router)) // Note, the port is usually gotten from the environment.
+	logrus.Fatal(http.ListenAndServe(":8080", router)) // Note, the port is usually gotten from the environment.
 }

@@ -37,6 +37,7 @@ require (
 	github.com/lestrrat-go/jwx v1.1.0 // indirect
 	github.com/lestrrat-go/option v1.0.0 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
+	github.com/sirupsen/logrus v1.9.3
 	github.com/stretchr/testify v1.8.2 // indirect
 	github.com/urfave/cli/v2 v2.25.7
 	go.mongodb.org/mongo-driver v1.12.0

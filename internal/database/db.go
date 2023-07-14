@@ -2,9 +2,9 @@ package database
 
 import (
 	"context"
-	"log"
 
 	_ "github.com/go-sql-driver/mysql"
+	"github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"go.mongodb.org/mongo-driver/mongo/readpref"
@@ -16,12 +16,12 @@ func InitDB(dataSourceName string) {
 	var err error
 	client, err := mongo.Connect(context.TODO(), options.Client().ApplyURI(dataSourceName))
 	if err != nil {
-		log.Panic(err)
+		logrus.Panic(err)
 	}
 
 	pingErr := client.Ping(context.TODO(), readpref.PrimaryPreferred())
 	if pingErr != nil {
-		log.Fatal(pingErr)
+		logrus.Fatal(pingErr)
 	}
 
 	DB = client.Database("plex_monitor")
