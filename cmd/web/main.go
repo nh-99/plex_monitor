@@ -10,16 +10,19 @@ import (
 	"plex_monitor/internal/web/api/controllers/user"
 	"plex_monitor/internal/web/api/controllers/webhook"
 
+	logger "github.com/chi-middleware/logrus-logger"
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
 	"github.com/go-chi/render"
 	"github.com/sirupsen/logrus"
 )
 
+var log logrus.FieldLogger
+
 func Routes() *chi.Mux {
 	router := chi.NewRouter()
 	router.Use(
-		middleware.Logger, // Log API request calls
+		logger.Logger("router", log),                  // Log API request calls
 		middleware.Compress(flate.DefaultCompression), // Compress results, mostly gzipping assets and json
 		middleware.RedirectSlashes,                    // Redirect slashes to no slash URL versions
 		middleware.Recoverer,                          // Recover from panics without crashing server
@@ -48,13 +51,19 @@ func initLogger() {
 	logrus.SetOutput(os.Stdout)
 	logrus.SetLevel(logrus.DebugLevel)
 	logrus.SetReportCaller(true)
+	log = &logrus.Logger{
+		Out:          os.Stdout,
+		Formatter:    new(logrus.JSONFormatter),
+		Level:        logrus.DebugLevel,
+		ExitFunc:     os.Exit,
+		ReportCaller: true,
+	}
 }
 
 func main() {
+	initLogger()
 	router := Routes()
 	database.InitDB(os.Getenv("DATABASE_URL"), os.Getenv("DATABASE_NAME"))
-
-	initLogger()
 
 	logrus.Info("Starting Plex Monitor Web...")
 
