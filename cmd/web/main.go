@@ -56,7 +56,7 @@ func initLogger() {
 		Formatter:    new(logrus.JSONFormatter),
 		Level:        logrus.DebugLevel,
 		ExitFunc:     os.Exit,
-		ReportCaller: true,
+		ReportCaller: false,
 	}
 }
 
