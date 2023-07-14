@@ -3,6 +3,7 @@ package webhook
 import (
 	"bytes"
 	"io"
+	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
 	"os"
@@ -68,12 +69,16 @@ func TestWebhookWithPlexService(t *testing.T) {
 	}
 
 	// Load json file and add it to the request body
-	jsonFile, err := os.Open("../../../../../test/plex_webhook_response_sample.json")
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer jsonFile.Close()
-	req.Body = jsonFile
+	file, err := os.Open("../../../../../test/plex_webhook_response_sample.json")
+	assert.NoError(t, err)
+	defer file.Close()
+	// Read the file contents
+	contents, err := ioutil.ReadAll(file)
+	assert.NoError(t, err)
+	// Convert byte slice to string
+	jsonString := string(contents)
+
+	req.Body = ioutil.NopCloser(bytes.NewBufferString(jsonString))
 
 	// We create a ResponseRecorder (which satisfies http.ResponseWriter) to record the response.
 	rr := httptest.NewRecorder()
@@ -92,6 +97,12 @@ func TestWebhookWithPlexService(t *testing.T) {
 	evt, err := database.DB.Collection("plex_webhook_data").CountDocuments(database.Ctx, bson.M{"event": "media.play"})
 	assert.NoError(t, err)
 	assert.Equal(t, int64(1), evt)
+
+	// Assert that we captured the raw data
+	test := bson.M{"data": jsonString}
+	raw, err := database.DB.Collection("raw_requests").CountDocuments(database.Ctx, test)
+	assert.NoError(t, err)
+	assert.Equal(t, int64(1), raw)
 }
 
 func TestWebhookWithSonarrService(t *testing.T) {
@@ -107,12 +118,16 @@ func TestWebhookWithSonarrService(t *testing.T) {
 	}
 
 	// Load json file and add it to the request body
-	jsonFile, err := os.Open("../../../../../test/sonarr_webhook_response_sample__on_grab.json")
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer jsonFile.Close()
-	req.Body = jsonFile
+	file, err := os.Open("../../../../../test/sonarr_webhook_response_sample__on_grab.json")
+	assert.NoError(t, err)
+	defer file.Close()
+	// Read the file contents
+	contents, err := ioutil.ReadAll(file)
+	assert.NoError(t, err)
+	// Convert byte slice to string
+	jsonString := string(contents)
+
+	req.Body = ioutil.NopCloser(bytes.NewBufferString(jsonString))
 
 	// We create a ResponseRecorder (which satisfies http.ResponseWriter) to record the response.
 	rr := httptest.NewRecorder()
@@ -128,6 +143,12 @@ func TestWebhookWithSonarrService(t *testing.T) {
 	count, err := database.DB.Collection("sonarr_webhook_data").CountDocuments(database.Ctx, bson.M{"series.id": 73})
 	assert.NoError(t, err)
 	assert.Equal(t, int64(1), count)
+
+	// Assert that we captured the raw data
+	test := bson.M{"data": jsonString}
+	raw, err := database.DB.Collection("raw_requests").CountDocuments(database.Ctx, test)
+	assert.NoError(t, err)
+	assert.Equal(t, int64(1), raw)
 }
 
 func TestWebhookWithRadarrService(t *testing.T) {
@@ -143,12 +164,16 @@ func TestWebhookWithRadarrService(t *testing.T) {
 	}
 
 	// Load json file and add it to the request body
-	jsonFile, err := os.Open("../../../../../test/radarr_webhook_response_sample__on_grab.json")
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer jsonFile.Close()
-	req.Body = jsonFile
+	file, err := os.Open("../../../../../test/radarr_webhook_response_sample__on_grab.json")
+	assert.NoError(t, err)
+	defer file.Close()
+	// Read the file contents
+	contents, err := ioutil.ReadAll(file)
+	assert.NoError(t, err)
+	// Convert byte slice to string
+	jsonString := string(contents)
+
+	req.Body = ioutil.NopCloser(bytes.NewBufferString(jsonString))
 
 	// We create a ResponseRecorder (which satisfies http.ResponseWriter) to record the response.
 	rr := httptest.NewRecorder()
@@ -164,6 +189,12 @@ func TestWebhookWithRadarrService(t *testing.T) {
 	count, err := database.DB.Collection("radarr_webhook_data").CountDocuments(database.Ctx, bson.M{"movie.id": 686})
 	assert.NoError(t, err)
 	assert.Equal(t, int64(1), count)
+
+	// Assert that we captured the raw data
+	test := bson.M{"data": jsonString}
+	raw, err := database.DB.Collection("raw_requests").CountDocuments(database.Ctx, test)
+	assert.NoError(t, err)
+	assert.Equal(t, int64(1), raw)
 }
 
 func TestWebhookWithOmbiService(t *testing.T) {
@@ -179,12 +210,16 @@ func TestWebhookWithOmbiService(t *testing.T) {
 	}
 
 	// Load json file and add it to the request body
-	jsonFile, err := os.Open("../../../../../test/ombi_webhook_response_sample.json")
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer jsonFile.Close()
-	req.Body = jsonFile
+	file, err := os.Open("../../../../../test/ombi_webhook_response_sample.json")
+	assert.NoError(t, err)
+	defer file.Close()
+	// Read the file contents
+	contents, err := ioutil.ReadAll(file)
+	assert.NoError(t, err)
+	// Convert byte slice to string
+	jsonString := string(contents)
+
+	req.Body = ioutil.NopCloser(bytes.NewBufferString(jsonString))
 
 	// We create a ResponseRecorder (which satisfies http.ResponseWriter) to record the response.
 	rr := httptest.NewRecorder()
@@ -200,4 +235,10 @@ func TestWebhookWithOmbiService(t *testing.T) {
 	count, err := database.DB.Collection("ombi_webhook_data").CountDocuments(database.Ctx, bson.M{"requestId": "1234"})
 	assert.NoError(t, err)
 	assert.Equal(t, int64(1), count)
+
+	// Assert that we captured the raw data
+	test := bson.M{"data": jsonString}
+	raw, err := database.DB.Collection("raw_requests").CountDocuments(database.Ctx, test)
+	assert.NoError(t, err)
+	assert.Equal(t, int64(1), raw)
 }
