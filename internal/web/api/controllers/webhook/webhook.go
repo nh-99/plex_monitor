@@ -43,7 +43,7 @@ func WebhookEntry(w http.ResponseWriter, r *http.Request) {
 
 	// Store raw response data in mongo
 	rawRequest := make(map[string]interface{})
-	rawRequest["data"] = bytes.NewReader(requestData)
+	rawRequest["data"] = string(requestData[:])
 	rawRequest["service"] = serviceType
 	database.DB.Collection("raw_requests").InsertOne(context.Background(), rawRequest)
 

@@ -56,7 +56,7 @@ type OmbiMonitoringService struct{}
 
 // RadarrWebhook is the endpoint that handles the inital request for webhooks and routes down to the service-specific func.
 func (rms OmbiMonitoringService) fire(l *logrus.Entry, w http.ResponseWriter, r *http.Request) {
-	l.Info("Firing webhook for Sonarr")
+	l.Info("Firing webhook for Ombi")
 
 	ombiWebhookData := models.OmbiWebhookData{}
 	err := ombiWebhookData.FromHTTPRequest(r)
