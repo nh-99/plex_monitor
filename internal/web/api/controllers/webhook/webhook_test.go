@@ -3,17 +3,22 @@ package webhook
 import (
 	"bytes"
 	"io"
+	"mime/multipart"
 	"net/http"
 	"net/http/httptest"
 	"os"
 	"plex_monitor/internal/database"
 	"testing"
 
+	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
 func setup() {
+	// Init logging
+	logrus.SetReportCaller(true)
+	logrus.SetLevel(logrus.DebugLevel)
 	// Initialize the database
 	database.InitDB(os.Getenv("DATABASE_URL"), "plex_monitor_test")
 }
@@ -67,17 +72,31 @@ func TestWebhookWithPlexService(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	// Load json file and add it to the request body
-	file, err := os.Open("../../../../../test/plex_webhook_response_sample.json")
+	// Construct multipart form request and add the json file to the "payload" field
+	var b bytes.Buffer
+	w := multipart.NewWriter(&b)
+	f, err := os.Open("../../../../../test/plex_webhook_response_sample.json")
 	assert.NoError(t, err)
-	defer file.Close()
-	// Read the file contents
-	contents, err := io.ReadAll(file)
-	assert.NoError(t, err)
-	// Convert byte slice to string
-	jsonString := string(contents)
+	defer f.Close()
 
-	req.Body = io.NopCloser(bytes.NewBufferString(jsonString))
+	// Parse the file data into a JSON object
+	json, err := io.ReadAll(f)
+	assert.NoError(t, err)
+
+	// Create the form field
+	fw, err := w.CreateFormField("payload")
+	assert.NoError(t, err)
+
+	// Write the json to the form field
+	_, err = fw.Write(json)
+	assert.NoError(t, err)
+
+	// Close the writer
+	w.Close()
+	req.Body = io.NopCloser(&b)
+
+	// Set the content type header
+	req.Header.Set("Content-Type", w.FormDataContentType())
 
 	// We create a ResponseRecorder (which satisfies http.ResponseWriter) to record the response.
 	rr := httptest.NewRecorder()
@@ -98,7 +117,7 @@ func TestWebhookWithPlexService(t *testing.T) {
 	assert.Equal(t, int64(1), evt)
 
 	// Assert that we captured the raw data
-	test := bson.M{"data": jsonString}
+	test := bson.M{"service": "plex"}
 	raw, err := database.DB.Collection("raw_requests").CountDocuments(database.Ctx, test)
 	assert.NoError(t, err)
 	assert.Equal(t, int64(1), raw)

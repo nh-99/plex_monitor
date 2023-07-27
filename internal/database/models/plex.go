@@ -6,50 +6,50 @@ import (
 )
 
 type PlexWebhookData struct {
-	Event   string `bson:"event"`
-	User    bool   `bson:"user"`
-	Owner   bool   `bson:"owner"`
+	Event   string `json:"event" bson:"event"`
+	User    bool   `json:"user" bson:"user"`
+	Owner   bool   `json:"owner" bson:"owner"`
 	Account struct {
-		ID    int    `bson:"id"`
-		Thumb string `bson:"thumb"`
-		Title string `bson:"title"`
-	} `bson:"Account"`
+		ID    int    `json:"id" bson:"id"`
+		Thumb string `json:"thumb" bson:"thumb"`
+		Title string `json:"title" bson:"title"`
+	} `json:"Account" bson:"Account"`
 	Server struct {
-		Title string `bson:"title"`
-		UUID  string `bson:"uuid"`
-	} `bson:"Server"`
+		Title string `json:"title" bson:"title"`
+		UUID  string `json:"uuid" bson:"uuid"`
+	} `json:"Server" bson:"Server"`
 	Player struct {
-		Local         bool   `bson:"local"`
-		PublicAddress string `bson:"publicAddress"`
-		Title         string `bson:"title"`
-		UUID          string `bson:"uuid"`
-	} `bson:"Player"`
+		Local         bool   `json:"local" bson:"local"`
+		PublicAddress string `json:"publicAddress" bson:"publicAddress"`
+		Title         string `json:"title" bson:"title"`
+		UUID          string `json:"uuid" bson:"uuid"`
+	} `json:"Player" bson:"Player"`
 	Metadata struct {
-		LibrarySectionType   string `bson:"librarySectionType"`
-		RatingKey            string `bson:"ratingKey"`
-		Key                  string `bson:"key"`
-		ParentRatingKey      string `bson:"parentRatingKey"`
-		GrandparentRatingKey string `bson:"grandparentRatingKey"`
-		GUID                 string `bson:"guid"`
-		LibrarySectionID     int    `bson:"librarySectionID"`
-		Type                 string `bson:"type"`
-		Title                string `bson:"title"`
-		GrandparentKey       string `bson:"grandparentKey"`
-		ParentKey            string `bson:"parentKey"`
-		GrandparentTitle     string `bson:"grandparentTitle"`
-		ParentTitle          string `bson:"parentTitle"`
-		Summary              string `bson:"summary"`
-		Index                int    `bson:"index"`
-		ParentIndex          int    `bson:"parentIndex"`
-		RatingCount          int    `bson:"ratingCount"`
-		Thumb                string `bson:"thumb"`
-		Art                  string `bson:"art"`
-		ParentThumb          string `bson:"parentThumb"`
-		GrandparentThumb     string `bson:"grandparentThumb"`
-		GrandparentArt       string `bson:"grandparentArt"`
-		AddedAt              int    `bson:"addedAt"`
-		UpdatedAt            int    `bson:"updatedAt"`
-	} `bson:"Metadata"`
+		LibrarySectionType   string `json:"librarySectionType" bson:"librarySectionType"`
+		RatingKey            string `json:"ratingKey" bson:"ratingKey"`
+		Key                  string `json:"key" bson:"key"`
+		ParentRatingKey      string `json:"parentRatingKey" bson:"parentRatingKey"`
+		GrandparentRatingKey string `json:"grandparentRatingKey" bson:"grandparentRatingKey"`
+		GUID                 string `json:"guid" bson:"guid"`
+		LibrarySectionID     int    `json:"librarySectionID" bson:"librarySectionID"`
+		Type                 string `json:"type" bson:"type"`
+		Title                string `json:"title" bson:"title"`
+		GrandparentKey       string `json:"grandparentKey" bson:"grandparentKey"`
+		ParentKey            string `json:"parentKey" bson:"parentKey"`
+		GrandparentTitle     string `json:"grandparentTitle" bson:"grandparentTitle"`
+		ParentTitle          string `json:"parentTitle" bson:"parentTitle"`
+		Summary              string `json:"summary" bson:"summary"`
+		Index                int    `json:"index" bson:"index"`
+		ParentIndex          int    `json:"parentIndex" bson:"parentIndex"`
+		RatingCount          int    `json:"ratingCount" bson:"ratingCount"`
+		Thumb                string `json:"thumb" bson:"thumb"`
+		Art                  string `json:"art" bson:"art"`
+		ParentThumb          string `json:"parentThumb" bson:"parentThumb"`
+		GrandparentThumb     string `json:"grandparentThumb" bson:"grandparentThumb"`
+		GrandparentArt       string `json:"grandparentArt" bson:"grandparentArt"`
+		AddedAt              int    `json:"addedAt" bson:"addedAt"`
+		UpdatedAt            int    `json:"updatedAt" bson:"updatedAt"`
+	} `json:"Metadata" bson:"Metadata"`
 }
 
 func (p *PlexWebhookData) ToJSON() ([]byte, error) {
@@ -65,9 +65,14 @@ func (p *PlexWebhookData) FromJSON(data []byte) error {
 }
 
 func (p *PlexWebhookData) FromHTTPRequest(r *http.Request) error {
-	err := json.NewDecoder(r.Body).Decode(p)
+	// Get the data from the "payload" form field and unmarshal it into the PlexWebhookData struct
+	// This is because Plex sends the data as a form field instead of a JSON body
+	jsonString := r.FormValue("payload")
+	// Unmarshal the JSON string into the PlexWebhookData struct
+	err := json.Unmarshal([]byte(jsonString), p)
 	if err != nil {
 		return err
 	}
+
 	return nil
 }

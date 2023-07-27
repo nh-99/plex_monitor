@@ -2,7 +2,6 @@ package webhook
 
 import (
 	"bytes"
-	"context"
 	"io"
 	"net/http"
 	"plex_monitor/internal/database"
@@ -10,6 +9,7 @@ import (
 
 	"github.com/go-chi/render"
 	"github.com/sirupsen/logrus"
+	"go.mongodb.org/mongo-driver/bson"
 )
 
 // WebhookResponse is the serializer for the login response
@@ -41,11 +41,12 @@ func WebhookEntry(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Store raw response data in mongo
-	rawRequest := make(map[string]interface{})
-	rawRequest["data"] = string(requestData[:])
-	rawRequest["service"] = serviceType
-	database.DB.Collection("raw_requests").InsertOne(context.Background(), rawRequest)
+	// Store the raw request in the database as UTF-8
+	_, err = database.DB.Collection("raw_requests").InsertOne(database.Ctx, bson.M{"data": string(requestData), "service": serviceType})
+	if err != nil {
+		api.RenderError("Unable to write raw data to database", l, w, r, err)
+		return
+	}
 
 	// Fire the hook for the given service, or return an error if the service is invalid
 	monitoringService := getService(serviceType)

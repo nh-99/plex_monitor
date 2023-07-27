@@ -12,7 +12,7 @@ import (
 
 // Firehose is the endpoint that streams data to the client
 func Firehose(w http.ResponseWriter, r *http.Request) {
-	opts := options.Find().SetLimit(1000) // Only return 1000 entries
+	opts := options.Find().SetLimit(1000).SetSort(bson.D{{Key: "_id", Value: -1}})
 	cursor, err := database.DB.Collection("raw_requests").Find(context.Background(), bson.D{}, opts)
 	if err != nil {
 		panic(err)
