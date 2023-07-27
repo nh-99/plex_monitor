@@ -8,6 +8,7 @@ import (
 	"net/http/httptest"
 	"os"
 	"plex_monitor/internal/database"
+	"plex_monitor/internal/database/models"
 	"testing"
 
 	"github.com/sirupsen/logrus"
@@ -57,7 +58,7 @@ func TestWebhookWithInvalidService(t *testing.T) {
 	// Assert that the response was what we expected
 	assert.Equal(t, http.StatusBadRequest, rr.Code, "handler returned wrong status code")
 	// Assert that the response body was what we expected
-	assert.Equal(t, "{\"status\":\"error\",\"message\":\"Invalid service\",\"success\":false,\"data\":null}\n", rr.Body.String(), "handler returned unexpected body")
+	assert.Equal(t, "{\"status\":\"error\",\"message\":\"Invalid service\",\"success\":false}\n", rr.Body.String(), "handler returned unexpected body")
 }
 
 func TestWebhookWithPlexService(t *testing.T) {
@@ -112,13 +113,13 @@ func TestWebhookWithPlexService(t *testing.T) {
 	}
 
 	// Assert that we stored the event in the database
-	evt, err := database.DB.Collection("plex_webhook_data").CountDocuments(database.Ctx, bson.M{"event": "media.play"})
+	evt, err := database.DB.Collection("plex_webhook_data").CountDocuments(database.Ctx, bson.M{"event": "media.pause"})
 	assert.NoError(t, err)
 	assert.Equal(t, int64(1), evt)
 
 	// Assert that we captured the raw data
-	test := bson.M{"service": "plex"}
-	raw, err := database.DB.Collection("raw_requests").CountDocuments(database.Ctx, test)
+	test := bson.M{"metadata.service": "plex"}
+	raw, err := models.CountFilesInBucket("raw_request_wires", test)
 	assert.NoError(t, err)
 	assert.Equal(t, int64(1), raw)
 }
@@ -163,8 +164,8 @@ func TestWebhookWithSonarrService(t *testing.T) {
 	assert.Equal(t, int64(1), count)
 
 	// Assert that we captured the raw data
-	test := bson.M{"data": jsonString}
-	raw, err := database.DB.Collection("raw_requests").CountDocuments(database.Ctx, test)
+	test := bson.M{"metadata.service": "sonarr"}
+	raw, err := models.CountFilesInBucket("raw_request_wires", test)
 	assert.NoError(t, err)
 	assert.Equal(t, int64(1), raw)
 }
@@ -209,8 +210,8 @@ func TestWebhookWithRadarrService(t *testing.T) {
 	assert.Equal(t, int64(1), count)
 
 	// Assert that we captured the raw data
-	test := bson.M{"data": jsonString}
-	raw, err := database.DB.Collection("raw_requests").CountDocuments(database.Ctx, test)
+	test := bson.M{"metadata.service": "radarr"}
+	raw, err := models.CountFilesInBucket("raw_request_wires", test)
 	assert.NoError(t, err)
 	assert.Equal(t, int64(1), raw)
 }
@@ -255,8 +256,8 @@ func TestWebhookWithOmbiService(t *testing.T) {
 	assert.Equal(t, int64(1), count)
 
 	// Assert that we captured the raw data
-	test := bson.M{"data": jsonString}
-	raw, err := database.DB.Collection("raw_requests").CountDocuments(database.Ctx, test)
+	test := bson.M{"metadata.service": "ombi"}
+	raw, err := models.CountFilesInBucket("raw_request_wires", test)
 	assert.NoError(t, err)
 	assert.Equal(t, int64(1), raw)
 }

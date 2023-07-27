@@ -1,22 +1,17 @@
 package webhook
 
 import (
-	"bytes"
-	"io"
+	"fmt"
 	"net/http"
-	"plex_monitor/internal/database"
+	"net/http/httputil"
+	"plex_monitor/internal/database/models"
 	"plex_monitor/internal/web/api"
+	"time"
 
 	"github.com/go-chi/render"
 	"github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/bson"
 )
-
-// WebhookResponse is the serializer for the login response
-type WebhookResponse struct {
-	Status  string `json:"status"`
-	Message string `json:"message"`
-}
 
 // WebhookEntry is the endpoint that handles the inital request for webhooks and routes down to the service-specific func.
 func WebhookEntry(w http.ResponseWriter, r *http.Request) {
@@ -26,7 +21,7 @@ func WebhookEntry(w http.ResponseWriter, r *http.Request) {
 	})
 
 	l.Info("Webhook received")
-	webhookResponse := WebhookResponse{}
+	webhookResponse := api.StatusResponse{}
 	serviceType := r.URL.Query().Get("service")
 
 	if r.Body == nil {
@@ -34,19 +29,10 @@ func WebhookEntry(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Get the body data as a string for reuse
-	requestData, err := io.ReadAll(r.Body)
-	if err != nil {
-		api.RenderError("Unable to read request body", l, w, r, err)
-		return
-	}
-
 	// Store the raw request in the database as UTF-8
-	_, err = database.DB.Collection("raw_requests").InsertOne(database.Ctx, bson.M{"data": string(requestData), "service": serviceType})
-	if err != nil {
-		api.RenderError("Unable to write raw data to database", l, w, r, err)
-		return
-	}
+	byts, _ := httputil.DumpRequest(r, true)
+	filename := fmt.Sprintf("%s_%s_%s.txt", serviceType, r.URL.Query().Get("event"), time.Now().Format("2006-01-02_15:04:05"))
+	models.AddFileToBucket("raw_request_wires", filename, byts, bson.M{"service": serviceType, "event": r.URL.Query().Get("event")})
 
 	// Fire the hook for the given service, or return an error if the service is invalid
 	monitoringService := getService(serviceType)
@@ -55,13 +41,13 @@ func WebhookEntry(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Re-construct the body data so we can re-use it & fire the hook
-	r.Body = io.NopCloser(bytes.NewReader(requestData))
+	// Fire the hook
 	monitoringService.fireHooks(l, w, r)
 
 	// Hooks successfully fired, return response
 	webhookResponse.Status = "success"
 	webhookResponse.Message = "Webhook fired successfully"
+	webhookResponse.Success = true
 
 	render.JSON(w, r, webhookResponse)
 }

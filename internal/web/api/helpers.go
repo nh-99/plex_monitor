@@ -9,12 +9,12 @@ import (
 
 // StatusResponse is a serializer for a generic status response
 type StatusResponse struct {
-	Status  string        `json:"status"`
-	Message string        `json:"message"`
-	Success bool          `json:"success"`
-	Data    []interface{} `json:"data"`
+	Status  string `json:"status"`
+	Message string `json:"message"`
+	Success bool   `json:"success"`
 }
 
+// RenderError is a helper function to render an error response and log the error.
 func RenderError(errorMessage string, l *logrus.Entry, w http.ResponseWriter, r *http.Request, err error) StatusResponse {
 	// Log the error
 	l.WithFields(logrus.Fields{
@@ -26,6 +26,7 @@ func RenderError(errorMessage string, l *logrus.Entry, w http.ResponseWriter, r 
 	// Construct the response
 	response.Status = "error"
 	response.Message = errorMessage
+	response.Success = false
 	w.WriteHeader(http.StatusBadRequest)
 
 	// Return the response
