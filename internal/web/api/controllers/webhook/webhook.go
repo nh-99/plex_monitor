@@ -32,7 +32,7 @@ func WebhookEntry(w http.ResponseWriter, r *http.Request) {
 	// Store the raw request in the database as UTF-8
 	byts, _ := httputil.DumpRequest(r, true)
 	filename := fmt.Sprintf("%s_%s.txt", serviceType, time.Now().Format("2006-01-02_15:04:05"))
-	models.AddFileToBucket("raw_request_wires", filename, byts, bson.M{"service": serviceType, "event": r.URL.Query().Get("event")})
+	models.AddFileToBucket(models.RawRequestWiresBucket, filename, byts, bson.M{"service": serviceType, "event": r.URL.Query().Get("event")})
 
 	// Fire the hook for the given service, or return an error if the service is invalid
 	monitoringService := getService(serviceType)

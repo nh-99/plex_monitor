@@ -119,7 +119,7 @@ func TestWebhookWithPlexService(t *testing.T) {
 
 	// Assert that we captured the raw data
 	test := bson.M{"metadata.service": "plex"}
-	raw, err := models.CountFilesInBucket("raw_request_wires", test)
+	raw, err := models.CountFilesInBucket(models.RawRequestWiresBucket, test)
 	assert.NoError(t, err)
 	assert.Equal(t, int64(1), raw)
 }
@@ -165,7 +165,7 @@ func TestWebhookWithSonarrService(t *testing.T) {
 
 	// Assert that we captured the raw data
 	test := bson.M{"metadata.service": "sonarr"}
-	raw, err := models.CountFilesInBucket("raw_request_wires", test)
+	raw, err := models.CountFilesInBucket(models.RawRequestWiresBucket, test)
 	assert.NoError(t, err)
 	assert.Equal(t, int64(1), raw)
 }
@@ -211,7 +211,7 @@ func TestWebhookWithRadarrService(t *testing.T) {
 
 	// Assert that we captured the raw data
 	test := bson.M{"metadata.service": "radarr"}
-	raw, err := models.CountFilesInBucket("raw_request_wires", test)
+	raw, err := models.CountFilesInBucket(models.RawRequestWiresBucket, test)
 	assert.NoError(t, err)
 	assert.Equal(t, int64(1), raw)
 }
@@ -257,7 +257,7 @@ func TestWebhookWithOmbiService(t *testing.T) {
 
 	// Assert that we captured the raw data
 	test := bson.M{"metadata.service": "ombi"}
-	raw, err := models.CountFilesInBucket("raw_request_wires", test)
+	raw, err := models.CountFilesInBucket(models.RawRequestWiresBucket, test)
 	assert.NoError(t, err)
 	assert.Equal(t, int64(1), raw)
 }

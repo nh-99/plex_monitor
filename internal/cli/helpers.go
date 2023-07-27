@@ -8,7 +8,7 @@ import (
 	"syscall"
 )
 
-func GetPassword(prompt string) string {
+func getPassword(prompt string) string {
 	fmt.Print(prompt)
 
 	// Common settings and variables for both stty calls.
