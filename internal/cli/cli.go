@@ -72,6 +72,14 @@ func GetCliApp() *cli.App {
 					getListFilesCmd(),
 				},
 			},
+			{
+				Name:    "debug",
+				Aliases: []string{"d"},
+				Usage:   "Run command specific to debugging the system",
+				Subcommands: []*cli.Command{
+					getReplayWireFileCmd(),
+				},
+			},
 		},
 	}
 }
