@@ -114,10 +114,12 @@ func getReplayWireFileCmd() *cli.Command {
 		Flags: []cli.Flag{
 			&cli.StringFlag{Name: "filename"},
 			&cli.StringFlag{Name: "filter", Required: false, Usage: "Partial matches of filename"},
+			&cli.StringFlag{Name: "host", Required: false, Usage: "Override the host header"},
 		},
 		Action: func(cCtx *cli.Context) error {
 			filename := cCtx.String("filename")
 			filter := cCtx.String("filter")
+			host := cCtx.String("host")
 
 			if filename == "" && filter == "" {
 				return cli.Exit("Filename or filter must be set", 1)
@@ -155,7 +157,7 @@ func getReplayWireFileCmd() *cli.Command {
 			for _, fName := range files {
 				fmt.Println("Replaying file:", fName)
 				// Read the file from the filesystem and put the string into a variable
-				raw, err := os.ReadFile("./output/" + fName)
+				raw, err := os.ReadFile(fName)
 				if err != nil {
 					return cli.Exit(err, 1)
 				}
@@ -167,6 +169,20 @@ func getReplayWireFileCmd() *cli.Command {
 				req, err := readRequest(rawStr, "http")
 				if err != nil {
 					return cli.Exit(err, 1)
+				}
+
+				// Override the host header if it's set
+				if host != "" {
+					// Modify the request URL to use the specified host instead of the parsed one
+					req.URL.Host = host
+
+					// Modify the request headers to use the specified host instead of the parsed one
+					req.Header.Set("Host", host)
+
+					// Modify the request host to use the specified host instead of the parsed one
+					req.Host = host
+
+					fmt.Println("  Overriding host header with:", host)
 				}
 
 				// Execute the request

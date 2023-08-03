@@ -4,18 +4,18 @@
    "owner":true,
    "Account":{
      "id":5769583,
-     "thumb":"https://plex.tv/users/18519be504ee71c9/avatar?c=1661347098",
-     "title":"nh_99"
+     "thumb":"https://google.com",
+     "title":"1234"
    },
    "Server":{
-     "title":"dionysus",
-     "uuid":"d5c69a06698d2ba76bf5669b4b8de451fe961eb3"
+     "title":"SERVER",
+     "uuid":"SERVER_UUID"
    },
    "Player":{
      "local":false,
-     "publicAddress":"172.16.90.207",
-     "title":"TV 2019",
-     "uuid":"3ifr62sjkrmw7k0fu6016qth"
+     "publicAddress":"1.1.1.1",
+     "title":"A TV",
+     "uuid":"asdf"
    },
    "Metadata":{
      "librarySectionType":"movie",
