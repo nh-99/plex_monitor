@@ -87,10 +87,12 @@ type CustomFormat struct {
 	CustomFormatScore int      `json:"customFormatScore" bson:"customFormatScore"`
 }
 
+// ToJSON converts the struct to JSON.
 func (p *RadarrWebhookData) ToJSON() ([]byte, error) {
 	return json.Marshal(p)
 }
 
+// FromJSON converts the JSON to struct.
 func (p *RadarrWebhookData) FromJSON(data []byte) error {
 	err := json.Unmarshal(data, p)
 	if err != nil {
@@ -99,6 +101,7 @@ func (p *RadarrWebhookData) FromJSON(data []byte) error {
 	return nil
 }
 
+// FromHTTPRequest converts an HTTP request to the struct.
 func (p *RadarrWebhookData) FromHTTPRequest(r *http.Request) error {
 	err := json.NewDecoder(r.Body).Decode(p)
 	if err != nil {

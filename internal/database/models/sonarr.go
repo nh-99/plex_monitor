@@ -258,10 +258,12 @@ type SonarrWebhookData struct {
 	EventType          string         `json:"eventType" bson:"eventType"`
 }
 
+// ToJSON returns the JSON encoding of the struct.
 func (p *SonarrWebhookData) ToJSON() ([]byte, error) {
 	return json.Marshal(p)
 }
 
+// FromJSON decodes the JSON-encoded data and stores the result in the struct.
 func (p *SonarrWebhookData) FromJSON(data []byte) error {
 	err := json.Unmarshal(data, p)
 	if err != nil {
@@ -270,6 +272,7 @@ func (p *SonarrWebhookData) FromJSON(data []byte) error {
 	return nil
 }
 
+// FromHTTPRequest decodes the JSON-encoded data from the HTTP request and stores the result in the struct.
 func (p *SonarrWebhookData) FromHTTPRequest(r *http.Request) error {
 	// Parse the request body into the struct
 	err := json.NewDecoder(r.Body).Decode(p)

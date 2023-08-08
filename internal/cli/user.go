@@ -27,7 +27,9 @@ func getUserCreateCmd() *cli.Command {
 				HashedPassword: s,
 				Activated:      true,
 				CreatedAt:      time.Now(),
+				CreatedBy:      models.SystemUserID,
 				UpdatedAt:      time.Now(),
+				UpdatedBy:      models.SystemUserID,
 			})
 			if err != nil {
 				panic(err)

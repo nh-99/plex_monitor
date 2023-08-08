@@ -5,6 +5,7 @@ import (
 	"net/http"
 )
 
+// PlexWebhookData is the struct that represents the data sent by Plex webhooks
 type PlexWebhookData struct {
 	Event   string `json:"event" bson:"event"`
 	User    bool   `json:"user" bson:"user"`
@@ -109,10 +110,12 @@ type PlexWebhookData struct {
 	} `json:"Metadata" bson:"Metadata"`
 }
 
+// ToJSON converts the PlexWebhookData struct to a JSON string
 func (p *PlexWebhookData) ToJSON() ([]byte, error) {
 	return json.Marshal(p)
 }
 
+// FromJSON converts a JSON string to a PlexWebhookData struct
 func (p *PlexWebhookData) FromJSON(data []byte) error {
 	err := json.Unmarshal(data, p)
 	if err != nil {
@@ -121,6 +124,7 @@ func (p *PlexWebhookData) FromJSON(data []byte) error {
 	return nil
 }
 
+// FromHTTPRequest converts a HTTP request to a PlexWebhookData struct
 func (p *PlexWebhookData) FromHTTPRequest(r *http.Request) error {
 	// Get the data from the "payload" form field and unmarshal it into the PlexWebhookData struct
 	// This is because Plex sends the data as a form field instead of a JSON body

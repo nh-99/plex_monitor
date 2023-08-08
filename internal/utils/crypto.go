@@ -12,18 +12,20 @@ import (
 )
 
 var (
-	p = &ArgonParams{
+	p = &argonParams{
 		memory:      64 * 1024,
 		iterations:  3,
 		parallelism: 2,
 		saltLength:  16,
 		keyLength:   32,
 	}
-	ErrInvalidHash         = errors.New("the encoded hash is not in the correct format")
+	// ErrInvalidHash is the error that is returned when the encoded hash is not in the correct format.
+	ErrInvalidHash = errors.New("the encoded hash is not in the correct format")
+	// ErrIncompatibleVersion is the error that is returned when the encoded hash was created with a different version of argon2.
 	ErrIncompatibleVersion = errors.New("incompatible version of argon2")
 )
 
-type ArgonParams struct {
+type argonParams struct {
 	memory      uint32
 	iterations  uint32
 	parallelism uint8
@@ -31,6 +33,7 @@ type ArgonParams struct {
 	keyLength   uint32
 }
 
+// HashString hashes the supplied string using the argon2 hashing algorithm.
 func HashString(hashableString string) (hash []byte, err error) {
 	salt, err := generateRandomBytes(p.saltLength)
 	if err != nil {
@@ -49,6 +52,7 @@ func HashString(hashableString string) (hash []byte, err error) {
 	return []byte(encodedHash), nil
 }
 
+// CompareStringToHash compares the supplied string to the supplied hash.
 func CompareStringToHash(suppliedString string, hashedString string) bool {
 	match, _ := comparePasswordAndHash(suppliedString, hashedString)
 	return match
@@ -84,7 +88,7 @@ func comparePasswordAndHash(password, encodedHash string) (match bool, err error
 	return false, nil
 }
 
-func decodeHash(encodedHash string) (p *ArgonParams, salt, hash []byte, err error) {
+func decodeHash(encodedHash string) (p *argonParams, salt, hash []byte, err error) {
 	vals := strings.Split(encodedHash, "$")
 	if len(vals) != 6 {
 		return nil, nil, nil, ErrInvalidHash
@@ -99,7 +103,7 @@ func decodeHash(encodedHash string) (p *ArgonParams, salt, hash []byte, err erro
 		return nil, nil, nil, ErrIncompatibleVersion
 	}
 
-	discoveredParams := &ArgonParams{}
+	discoveredParams := &argonParams{}
 	_, err = fmt.Sscanf(vals[3], "m=%d,t=%d,p=%d", &discoveredParams.memory, &discoveredParams.iterations, &discoveredParams.parallelism)
 	if err != nil {
 		return nil, nil, nil, err

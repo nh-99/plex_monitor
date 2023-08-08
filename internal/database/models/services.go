@@ -8,6 +8,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 )
 
+// ServiceData is the struct that represents the service data that is stored in the database.
 type ServiceData struct {
 	ID          string    `bson:"_id"`
 	ServiceName string    `bson:"service_name"`
@@ -18,6 +19,7 @@ type ServiceData struct {
 	UpdatedBy   string    `bson:"updated_by"`
 }
 
+// GetAllServices returns all services.
 func GetAllServices() ([]ServiceData, error) {
 	var services []ServiceData
 
