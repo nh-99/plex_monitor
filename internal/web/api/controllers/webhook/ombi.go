@@ -1,10 +1,10 @@
 package webhook
 
 import (
+	"fmt"
 	"net/http"
 	"plex_monitor/internal/database"
 	"plex_monitor/internal/database/models"
-	"plex_monitor/internal/web/api"
 
 	"github.com/sirupsen/logrus"
 )
@@ -55,19 +55,19 @@ type OmbiWebhookRequest struct {
 type OmbiMonitoringService struct{}
 
 // RadarrWebhook is the endpoint that handles the inital request for webhooks and routes down to the service-specific func.
-func (rms OmbiMonitoringService) fire(l *logrus.Entry, w http.ResponseWriter, r *http.Request) {
+func (rms OmbiMonitoringService) fire(l *logrus.Entry, w http.ResponseWriter, r *http.Request) error {
 	l.Info("Firing webhook for Ombi")
 
 	ombiWebhookData := models.OmbiWebhookData{}
 	err := ombiWebhookData.FromHTTPRequest(r)
 	if err != nil {
-		api.RenderError("Could not parse data (bad request data)", l, w, r, err)
-		return
+		return fmt.Errorf("unable to parse request (bad request data): %s", err)
 	}
 
 	_, err = database.DB.Collection("ombi_webhook_data").InsertOne(database.Ctx, ombiWebhookData)
 	if err != nil {
-		api.RenderError("Could not store data", l, w, r, err)
-		return
+		return fmt.Errorf("unable to write to database: %s", err)
 	}
+
+	return nil
 }

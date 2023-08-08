@@ -233,8 +233,8 @@ type EpisodeFile struct {
 	EpisodeSeries *EpisodeSeries                `json:"series,omitempty" bson:"series,omitempty"`
 }
 
-// Release represents information about the grabbed release.
-type Release struct {
+// TvRelease represents information about the grabbed release.
+type TvRelease struct {
 	Quality        string `json:"quality" bson:"quality"`
 	QualityVersion int    `json:"qualityVersion" bson:"qualityVersion"`
 	ReleaseGroup   string `json:"releaseGroup" bson:"releaseGroup"`
@@ -247,7 +247,7 @@ type Release struct {
 type SonarrWebhookData struct {
 	Series             Series         `json:"series" bson:"series"`
 	Episodes           []Episode      `json:"episodes" bson:"episodes"`
-	Release            *Release       `json:"release,omitempty" bson:"release,omitempty"`
+	Release            *TvRelease     `json:"release,omitempty" bson:"release,omitempty"`
 	EpisodeFile        *EpisodeFile   `json:"episodeFile,omitempty" bson:"episodeFile,omitempty"`
 	IsUpgrade          *bool          `json:"isUpgrade,omitempty" bson:"isUpgrade,omitempty"`
 	DownloadClient     *string        `json:"downloadClient,omitempty" bson:"downloadClient,omitempty"`

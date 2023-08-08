@@ -42,7 +42,11 @@ func WebhookEntry(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Fire the hook
-	monitoringService.fireHooks(l, w, r)
+	err := monitoringService.fireHooks(l, w, r)
+	if err != nil {
+		api.RenderError(fmt.Sprintf("There was an issue firing the webhook for service %s", serviceType), l, w, r, err)
+		return
+	}
 
 	// Hooks successfully fired, return response
 	webhookResponse.Status = "success"
@@ -53,7 +57,7 @@ func WebhookEntry(w http.ResponseWriter, r *http.Request) {
 }
 
 type ServiceMonitor interface {
-	fire(*logrus.Entry, http.ResponseWriter, *http.Request)
+	fire(*logrus.Entry, http.ResponseWriter, *http.Request) error
 }
 
 // Executes the functions for data collection & storage.
@@ -62,9 +66,9 @@ type MonitoringService struct {
 }
 
 // Run the data collection & storage.
-func (m MonitoringService) fireHooks(l *logrus.Entry, w http.ResponseWriter, r *http.Request) {
+func (m MonitoringService) fireHooks(l *logrus.Entry, w http.ResponseWriter, r *http.Request) error {
 	// Fire webhooks for specific service
-	m.monitor.fire(l, w, r)
+	return m.monitor.fire(l, w, r)
 }
 
 func getService(svcName string) MonitoringService {
