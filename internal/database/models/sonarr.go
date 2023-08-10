@@ -227,7 +227,7 @@ type EpisodeFile struct {
 	ReleaseGroup  string                        `json:"releaseGroup" bson:"releaseGroup"`
 	SceneName     string                        `json:"sceneName" bson:"sceneName"`
 	Size          int                           `json:"size" bson:"size"`
-	Quality       interface{}                   `json:"quality" bson:"quality" bson:"quality" bson:"quality"`
+	Quality       interface{}                   `json:"quality" bson:"quality" bson:"quality"`
 	MediaInfo     *MediaInfo                    `json:"mediaInfo,omitempty" bson:"mediaInfo,omitempty"`
 	Episodes      *EpisodeFileEpisodesContainer `json:"episodes,omitempty" bson:"episodes,omitempty"`
 	Language      *EpisodeLanguage              `json:"language,omitempty" bson:"language,omitempty"`
