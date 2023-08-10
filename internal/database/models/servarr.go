@@ -18,6 +18,7 @@ type ServarrHealthData struct {
 	EventType      string    `json:"eventType" bson:"eventType"`
 	InstanceName   *string   `json:"instanceName,omitempty" bson:"instanceName,omitempty"`
 	ApplicationURL *string   `json:"applicationUrl,omitempty" bson:"applicationUrl,omitempty"`
+	ServiceName    string    `json:"serviceName" bson:"serviceName"`
 	CreatedAt      time.Time `json:"createdAt" bson:"createdAt"`
 }
 

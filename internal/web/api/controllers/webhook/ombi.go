@@ -26,7 +26,7 @@ func (rms OmbiMonitoringService) fire(l *logrus.Entry, w http.ResponseWriter, r 
 		return fmt.Errorf("unable to parse request (bad request data): %s", err)
 	}
 
-	_, err = database.DB.Collection(models.OmbiCollectionName).InsertOne(database.Ctx, ombiWebhookData)
+	_, err = database.DB.Collection(models.WebhookCollectionName).InsertOne(database.Ctx, ombiWebhookData)
 	if err != nil {
 		return fmt.Errorf("unable to write to database: %s", err)
 	}

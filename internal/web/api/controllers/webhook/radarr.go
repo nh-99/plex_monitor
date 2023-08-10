@@ -51,8 +51,10 @@ func (rms RadarrMonitoringService) fire(l *logrus.Entry, w http.ResponseWriter, 
 			return fmt.Errorf("could not parse data (bad request data): %w", err)
 		}
 
+		healthData.ServiceName = "radarr"
+
 		// Store the data in the database
-		_, err := database.DB.Collection(models.RadarrCollectionName).InsertOne(database.Ctx, healthData)
+		_, err := database.DB.Collection(models.WebhookCollectionName).InsertOne(database.Ctx, healthData)
 		if err != nil {
 			return fmt.Errorf("could not store data: %w", err)
 		}
@@ -61,7 +63,7 @@ func (rms RadarrMonitoringService) fire(l *logrus.Entry, w http.ResponseWriter, 
 		return nil
 	}
 
-	_, err = database.DB.Collection(models.RadarrCollectionName).InsertOne(database.Ctx, radarrWebhookData)
+	_, err = database.DB.Collection(models.WebhookCollectionName).InsertOne(database.Ctx, radarrWebhookData)
 	if err != nil {
 		return fmt.Errorf("could not store data: %w", err)
 	}

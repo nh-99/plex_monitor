@@ -6,11 +6,6 @@ import (
 	"time"
 )
 
-const (
-	// OmbiCollectionName is the name of the collection in the database for Ombi
-	OmbiCollectionName = "ombi_webhook_data"
-)
-
 // OmbiWebhookData is the struct that represents the data sent by Ombi
 type OmbiWebhookData struct {
 	ID                               string    `json:"-" bson:"_id"`
@@ -50,6 +45,7 @@ type OmbiWebhookData struct {
 	PartiallyAvailableEpisodesList   string    `json:"partiallyAvailableEpisodesList" bson:"partiallyAvailableEpisodesList"`
 	PartiallyAvailableEpisodeCount   string    `json:"partiallyAvailableEpisodeCount" bson:"partiallyAvailableEpisodeCount"`
 	NotificationType                 string    `json:"notificationType" bson:"notificationType"`
+	ServiceName                      string    `json:"serviceName" bson:"serviceName"`
 	CreatedAt                        time.Time `json:"createdAt" bson:"createdAt"`
 }
 
@@ -73,6 +69,7 @@ func (p *OmbiWebhookData) FromHTTPRequest(r *http.Request) error {
 	if err != nil {
 		return err
 	}
+	p.ServiceName = "ombi"
 	p.CreatedAt = time.Now()
 	return nil
 }

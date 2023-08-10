@@ -6,11 +6,6 @@ import (
 	"time"
 )
 
-const (
-	// RadarrCollectionName is the name of the collection in the database for Radarr webhook data
-	RadarrCollectionName = "radarr_webhook_data"
-)
-
 // RadarrWebhookData is the struct that represents the data that is sent from Radarr.
 type RadarrWebhookData struct {
 	ID                 string        `json:"-" bson:"_id"`
@@ -25,6 +20,7 @@ type RadarrWebhookData struct {
 	EventType          string        `json:"eventType" bson:"eventType"`
 	InstanceName       string        `json:"instanceName" bson:"instanceName"`
 	ApplicationURL     string        `json:"applicationUrl" bson:"applicationUrl"`
+	ServiceName        string        `json:"serviceName" bson:"serviceName"`
 	CreatedAt          time.Time     `json:"createdAt" bson:"createdAt"`
 }
 
@@ -115,6 +111,7 @@ func (p *RadarrWebhookData) FromHTTPRequest(r *http.Request) error {
 	if err != nil {
 		return err
 	}
+	p.ServiceName = "radarr"
 	p.CreatedAt = time.Now()
 	return nil
 }

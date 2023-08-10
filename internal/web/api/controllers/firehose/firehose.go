@@ -4,6 +4,7 @@ import (
 	"context"
 	"net/http"
 	"plex_monitor/internal/database"
+	"plex_monitor/internal/database/models"
 
 	"github.com/go-chi/render"
 	"go.mongodb.org/mongo-driver/bson"
@@ -12,8 +13,8 @@ import (
 
 // Firehose is the endpoint that streams data to the client
 func Firehose(w http.ResponseWriter, r *http.Request) {
-	opts := options.Find().SetLimit(1000).SetSort(bson.D{{Key: "_id", Value: -1}})
-	cursor, err := database.DB.Collection("raw_requests").Find(context.Background(), bson.D{}, opts)
+	opts := options.Find().SetLimit(1000).SetSort(bson.D{{Key: "created_at", Value: -1}})
+	cursor, err := database.DB.Collection(models.WebhookCollectionName).Find(context.Background(), bson.D{}, opts)
 	if err != nil {
 		panic(err)
 	}
