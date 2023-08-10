@@ -5,49 +5,52 @@ import (
 	"net/http"
 )
 
+// OmbiWebhookData is the struct that represents the data sent by Ombi
 type OmbiWebhookData struct {
-	RequestId                        string `bson:"requestId"`
-	RequestedUser                    string `bson:"requestedUser"`
-	Title                            string `bson:"title"`
-	RequestedDate                    string `bson:"requestedDate"`
-	Type                             string `bson:"type"`
-	AdditionalInformation            string `bson:"additionalInformation"`
-	LongDate                         string `bson:"longDate"`
-	ShortDate                        string `bson:"shortDate"`
-	LongTime                         string `bson:"longTime"`
-	ShortTime                        string `bson:"shortTime"`
-	Overview                         string `bson:"overview"`
-	Year                             string `bson:"year"`
-	EpisodesList                     string `bson:"episodesList"`
-	SeasonsList                      string `bson:"seasonsList"`
-	PosterImage                      string `bson:"posterImage"`
-	ApplicationName                  string `bson:"applicationName"`
-	ApplicationUrl                   string `bson:"applicationUrl"`
-	IssueDescription                 string `bson:"issueDescription"`
-	IssueCategory                    string `bson:"issueCategory"`
-	IssueStatus                      string `bson:"issueStatus"`
-	IssueSubject                     string `bson:"issueSubject"`
-	NewIssueComment                  string `bson:"newIssueComment"`
-	IssueUser                        string `bson:"issueUser"`
-	UserName                         string `bson:"userName"`
-	Alias                            string `bson:"alias"`
-	RequestedByAlias                 string `bson:"requestedByAlias"`
-	UserPreference                   string `bson:"userPreference"`
-	DenyReason                       string `bson:"denyReason"`
-	AvailableDate                    string `bson:"availableDate"`
-	RequestStatus                    string `bson:"requestStatus"`
-	ProviderId                       string `bson:"providerId"`
-	PartiallyAvailableEpisodeNumbers string `bson:"partiallyAvailableEpisodeNumbers"`
-	PartiallyAvailableSeasonNumber   string `bson:"partiallyAvailableSeasonNumber"`
-	PartiallyAvailableEpisodesList   string `bson:"partiallyAvailableEpisodesList"`
-	PartiallyAvailableEpisodeCount   string `bson:"partiallyAvailableEpisodeCount"`
-	NotificationType                 string `bson:"notificationType"`
+	RequestID                        string `json:"requestId" bson:"requestId"`
+	RequestedUser                    string `json:"requestedUser" bson:"requestedUser"`
+	Title                            string `json:"title" bson:"title"`
+	RequestedDate                    string `json:"requestedDate" bson:"requestedDate"`
+	Type                             string `json:"type" bson:"type"`
+	AdditionalInformation            string `json:"additionalInformation" bson:"additionalInformation"`
+	LongDate                         string `json:"longDate" bson:"longDate"`
+	ShortDate                        string `json:"shortDate" bson:"shortDate"`
+	LongTime                         string `json:"longTime" bson:"longTime"`
+	ShortTime                        string `json:"shortTime" bson:"shortTime"`
+	Overview                         string `json:"overview" bson:"overview"`
+	Year                             string `json:"year" bson:"year"`
+	EpisodesList                     string `json:"episodesList" bson:"episodesList"`
+	SeasonsList                      string `json:"seasonsList" bson:"seasonsList"`
+	PosterImage                      string `json:"posterImage" bson:"posterImage"`
+	ApplicationName                  string `json:"applicationName" bson:"applicationName"`
+	ApplicationURL                   string `json:"applicationUrl" bson:"applicationUrl"`
+	IssueDescription                 string `json:"issueDescription" bson:"issueDescription"`
+	IssueCategory                    string `json:"issueCategory" bson:"issueCategory"`
+	IssueStatus                      string `json:"issueStatus" bson:"issueStatus"`
+	IssueSubject                     string `json:"issueSubject" bson:"issueSubject"`
+	NewIssueComment                  string `json:"newIssueComment" bson:"newIssueComment"`
+	IssueUser                        string `json:"issueUser" bson:"issueUser"`
+	UserName                         string `json:"userName" bson:"userName"`
+	Alias                            string `json:"alias" bson:"alias"`
+	RequestedByAlias                 string `json:"requestedByAlias" bson:"requestedByAlias"`
+	UserPreference                   string `json:"userPreference" bson:"userPreference"`
+	DenyReason                       string `json:"denyReason" bson:"denyReason"`
+	AvailableDate                    string `json:"availableDate" bson:"availableDate"`
+	RequestStatus                    string `json:"requestStatus" bson:"requestStatus"`
+	ProviderID                       string `json:"providerId" bson:"providerId"`
+	PartiallyAvailableEpisodeNumbers string `json:"partiallyAvailableEpisodeNumbers" bson:"partiallyAvailableEpisodeNumbers"`
+	PartiallyAvailableSeasonNumber   string `json:"partiallyAvailableSeasonNumber" bson:"partiallyAvailableSeasonNumber"`
+	PartiallyAvailableEpisodesList   string `json:"partiallyAvailableEpisodesList" bson:"partiallyAvailableEpisodesList"`
+	PartiallyAvailableEpisodeCount   string `json:"partiallyAvailableEpisodeCount" bson:"partiallyAvailableEpisodeCount"`
+	NotificationType                 string `json:"notificationType" bson:"notificationType"`
 }
 
+// ToJSON converts the struct to JSON
 func (p *OmbiWebhookData) ToJSON() ([]byte, error) {
 	return json.Marshal(p)
 }
 
+// FromJSON converts the JSON to struct
 func (p *OmbiWebhookData) FromJSON(data []byte) error {
 	err := json.Unmarshal(data, p)
 	if err != nil {
@@ -56,6 +59,7 @@ func (p *OmbiWebhookData) FromJSON(data []byte) error {
 	return nil
 }
 
+// FromHTTPRequest converts the HTTP request to struct
 func (p *OmbiWebhookData) FromHTTPRequest(r *http.Request) error {
 	err := json.NewDecoder(r.Body).Decode(p)
 	if err != nil {
