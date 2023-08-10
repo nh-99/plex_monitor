@@ -1,0 +1,28 @@
+{
+  "movie": {
+    "id": 686,
+    "title": "<movieTitle>",
+    "year": 1234,
+    "releaseDate": "yyyy-MM-dd",
+    "folderPath": "<pathToFolder>",
+    "tmdbId": 1234,
+    "imdbId": "tt<id>"
+  },
+  "remoteMovie": {
+    "tmdbId": 1234,
+    "imdbId": "tt<id>",
+    "title": "<movieTitle>",
+    "year": 1234
+  },
+  "release": {
+    "quality": "Bluray-1080p",
+    "qualityVersion": 1,
+    "releaseGroup": "<rlsGroup>",
+    "releaseTitle": "The.Movie.Title.2012.1080p.BluRay.x265-<rlsGroup>",
+    "indexer": "<indexer>",
+    "size": 200000
+  },
+  "downloadClient": "<downloadClient>",
+  "downloadClientType": "<type>",
+  "eventType": "Grab"
+}

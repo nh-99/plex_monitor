@@ -1,0 +1,468 @@
+{
+   "event":"media.pause",
+   "user":true,
+   "owner":true,
+   "Account":{
+     "id":5769583,
+     "thumb":"https://google.com",
+     "title":"1234"
+   },
+   "Server":{
+     "title":"SERVER",
+     "uuid":"SERVER_UUID"
+   },
+   "Player":{
+     "local":false,
+     "publicAddress":"1.1.1.1",
+     "title":"A TV",
+     "uuid":"asdf"
+   },
+   "Metadata":{
+     "librarySectionType":"movie",
+     "ratingKey":"35619",
+     "key":"/library/metadata/35619",
+     "guid":"plex://movie/5d776832eb5d26001f1e0024",
+     "studio":"Columbia Pictures",
+     "type":"movie",
+     "title":"Big Daddy",
+     "librarySectionTitle":"Movies",
+     "librarySectionID":1,
+     "librarySectionKey":"/library/sections/1",
+     "contentRating":"PG-13",
+     "summary":"A lazy law-school grad adopts a kid to impress his girlfriend, but everything doesn't go as planned and he becomes the unlikely foster father.",
+     "rating":3.9,
+     "audienceRating":7.4,
+     "viewOffset":2421255,
+     "lastViewedAt":1690422326,
+     "year":1999,
+     "tagline":"Nature called. Look who answered.",
+     "thumb":"/library/metadata/35619/thumb/1689311049",
+     "art":"/library/metadata/35619/art/1689311049",
+     "duration":5580000,
+     "originallyAvailableAt":"1999-06-25",
+     "addedAt":1689311047,
+     "updatedAt":1689311049,
+     "audienceRatingImage":"rottentomatoes://image.rating.upright",
+     "primaryExtraKey":"/library/metadata/35620",
+     "ratingImage":"rottentomatoes://image.rating.rotten",
+     "Genre":[
+       {
+         "id":759,
+         "filter":"genre=759",
+         "tag":"Comedy",
+         "count":298
+       },
+       {
+         "id":39,
+         "filter":"genre=39",
+         "tag":"Drama",
+         "count":243
+       }
+     ],
+     "Country":[
+       {
+         "id":53187,
+         "filter":"country=53187",
+         "tag":"United States of America",
+         "count":613
+       }
+     ],
+     "Guid":[
+       {
+         "id":"imdb://tt0142342"
+       },
+       {
+         "id":"tmdb://9032"
+       },
+       {
+         "id":"tvdb://1721"
+       }
+     ],
+     "Rating":[
+       {
+         "image":"imdb://image.rating",
+         "value":6.4,
+         "type":"audience",
+         "count":658
+       },
+       {
+         "image":"rottentomatoes://image.rating.rotten",
+         "value":3.9,
+         "type":"critic",
+         "count":221
+       },
+       {
+         "image":"rottentomatoes://image.rating.upright",
+         "value":7.4,
+         "type":"audience",
+         "count":499
+       },
+       {
+         "image":"themoviedb://image.rating",
+         "value":6.5,
+         "type":"audience",
+         "count":657
+       }
+     ],
+     "Director":[
+       {
+         "id":59484,
+         "filter":"director=59484",
+         "tag":"Dennis Dugan",
+         "tagKey":"5d77682a3c3c2a001fbcbd2b",
+         "count":3,
+         "thumb":"https://metadata-static.plex.tv/people/5d77682a3c3c2a001fbcbd2b.jpg"
+       }
+     ],
+     "Writer":[
+       {
+         "id":55625,
+         "filter":"writer=55625",
+         "tag":"Adam Sandler",
+         "tagKey":"5d77682aeb5d26001f1de575",
+         "count":3,
+         "thumb":"https://metadata-static.plex.tv/7/people/76d450ae863fb252667b6c8f45c876e9.jpg"
+       },
+       {
+         "id":63355,
+         "filter":"writer=63355",
+         "tag":"Tim Herlihy",
+         "tagKey":"5d77682b151a60001f24ba98",
+         "count":5,
+         "thumb":"https://metadata-static.plex.tv/people/5d77682b151a60001f24ba98.jpg"
+       },
+       {
+         "id":133980,
+         "filter":"writer=133980",
+         "tag":"Steve Franks",
+         "tagKey":"5d776833eb5d26001f1e028b",
+         "thumb":"https://metadata-static.plex.tv/b/people/b1763c9fff381f78ef51722ef4461fdf.jpg"
+       }
+     ],
+     "Role":[
+       {
+         "id":59289,
+         "filter":"actor=59289",
+         "tag":"Adam Sandler",
+         "tagKey":"5d77682aeb5d26001f1de575",
+         "count":11,
+         "role":"Sonny Koufax",
+         "thumb":"https://metadata-static.plex.tv/7/people/76d450ae863fb252667b6c8f45c876e9.jpg"
+       },
+       {
+         "id":55502,
+         "filter":"actor=55502",
+         "tag":"Joey Lauren Adams",
+         "tagKey":"5d77682c2ec6b5001f6bad77",
+         "count":3,
+         "role":"Layla Maloney",
+         "thumb":"https://metadata-static.plex.tv/people/5d77682c2ec6b5001f6bad77.jpg"
+       },
+       {
+         "id":31812,
+         "filter":"actor=31812",
+         "tag":"Jon Stewart",
+         "tagKey":"5d77682861141d001fb13822",
+         "count":2,
+         "role":"Kevin Gerrity",
+         "thumb":"https://metadata-static.plex.tv/a/people/a4ed2cfd13f468ea4ed266aa1e02a782.jpg"
+       },
+       {
+         "id":81475,
+         "filter":"actor=81475",
+         "tag":"Cole Sprouse",
+         "tagKey":"5d77682c85719b001f3a1e9e",
+         "role":"Julian McGrath",
+         "thumb":"https://metadata-static.plex.tv/a/people/aff1ab3d7825aeb9f43ba48e0b6fc4d4.jpg"
+       },
+       {
+         "id":93110,
+         "filter":"actor=93110",
+         "tag":"Dylan Sprouse",
+         "tagKey":"5d77682c85719b001f3a1e9f",
+         "role":"Julian McGrath",
+         "thumb":"https://metadata-static.plex.tv/2/people/2390822660244a7ffc4214ca38aac9fb.jpg"
+       },
+       {
+         "id":85549,
+         "filter":"actor=85549",
+         "tag":"Josh Mostel",
+         "tagKey":"5d77682a2e80df001ebdd374",
+         "count":3,
+         "role":"Arthur Brooks",
+         "thumb":"https://image.tmdb.org/t/p/original/zX8vyQ9JdWsr1cmPvvyrw01aPiQ.jpg"
+       },
+       {
+         "id":55971,
+         "filter":"actor=55971",
+         "tag":"Leslie Mann",
+         "tagKey":"5d7768313c3c2a001fbcd531",
+         "count":4,
+         "role":"Corinne Maloney",
+         "thumb":"https://metadata-static.plex.tv/4/people/45d1aa92040ef8b8173ecdf4468dd1d8.jpg"
+       },
+       {
+         "id":58404,
+         "filter":"actor=58404",
+         "tag":"Allen Covert",
+         "tagKey":"5d77682aeb5d26001f1de579",
+         "count":9,
+         "role":"Phil D'Amato",
+         "thumb":"https://metadata-static.plex.tv/e/people/eaffa420de1483866f3c4936dc89309b.jpg"
+       },
+       {
+         "id":58417,
+         "filter":"actor=58417",
+         "tag":"Rob Schneider",
+         "tagKey":"5d776828eb5d26001f1ddbbc",
+         "count":5,
+         "role":"Delivery Guy",
+         "thumb":"https://metadata-static.plex.tv/people/5d776828eb5d26001f1ddbbc.jpg"
+       },
+       {
+         "id":133887,
+         "filter":"actor=133887",
+         "tag":"Kristy Swanson",
+         "tagKey":"5d776832f59e5800218985e9",
+         "role":"Vanessa",
+         "thumb":"https://metadata-static.plex.tv/3/people/356cf86126ef7e36b1406006405e6c62.jpg"
+       },
+       {
+         "id":114543,
+         "filter":"actor=114543",
+         "tag":"Joseph Bologna",
+         "tagKey":"5d77682954f42c001f8c2e1c",
+         "count":2,
+         "role":"Lenny Koufax",
+         "thumb":"https://metadata-static.plex.tv/7/people/7102b99be434478a7ad8a10552691ca4.jpg"
+       },
+       {
+         "id":55637,
+         "filter":"actor=55637",
+         "tag":"Peter Dante",
+         "tagKey":"5d77682aeb5d26001f1de57b",
+         "count":9,
+         "role":"Tommy Grayton",
+         "thumb":"https://metadata-static.plex.tv/people/5d77682aeb5d26001f1de57b.jpg"
+       },
+       {
+         "id":58419,
+         "filter":"actor=58419",
+         "tag":"Jonathan Loughran",
+         "tagKey":"5d776826103a2d001f563f8b",
+         "count":8,
+         "role":"Mike",
+         "thumb":"https://metadata-static.plex.tv/people/5d776826103a2d001f563f8b.jpg"
+       },
+       {
+         "id":37894,
+         "filter":"actor=37894",
+         "tag":"Steve Buscemi",
+         "tagKey":"5d776825151a60001f24a3e5",
+         "count":14,
+         "role":"Homeless Guy",
+         "thumb":"https://metadata-static.plex.tv/1/people/1f729f5a8c8a07e034d29ee22892785a.jpg"
+       },
+       {
+         "id":63365,
+         "filter":"actor=63365",
+         "tag":"Tim Herlihy",
+         "tagKey":"5d77682b151a60001f24ba98",
+         "count":4,
+         "role":"Singing Kangaroo",
+         "thumb":"https://metadata-static.plex.tv/people/5d77682b151a60001f24ba98.jpg"
+       },
+       {
+         "id":142872,
+         "filter":"actor=142872",
+         "tag":"Edmund Lyndeck",
+         "tagKey":"5d77682f2ec6b5001f6bb0bd",
+         "count":2,
+         "role":"Mr. Herlihy",
+         "thumb":"https://metadata-static.plex.tv/people/5d77682f2ec6b5001f6bb0bd.jpg"
+       },
+       {
+         "id":144830,
+         "filter":"actor=144830",
+         "tag":"Larkin Malloy",
+         "tagKey":"5d776833eb5d26001f1e0288",
+         "role":"Restaurant Owner",
+         "thumb":"https://metadata-static.plex.tv/people/5d776833eb5d26001f1e0288.jpg"
+       },
+       {
+         "id":144831,
+         "filter":"actor=144831",
+         "tag":"Samantha Brown",
+         "tagKey":"5d776832999c64001ec2ec2d",
+         "role":"Employee"
+       },
+       {
+         "id":74977,
+         "filter":"actor=74977",
+         "tag":"Neal Huff",
+         "tagKey":"5d7768347e9a3c0020c6c86e",
+         "role":"Customer",
+         "thumb":"https://metadata-static.plex.tv/0/people/0a8f031c4c02b5a16618a5d85c9d70a8.jpg"
+       },
+       {
+         "id":144832,
+         "filter":"actor=144832",
+         "tag":"Geoffrey Horne",
+         "tagKey":"5d7768283c3c2a001fbcb613",
+         "role":"Sid",
+         "thumb":"https://metadata-static.plex.tv/people/5d7768283c3c2a001fbcb613.jpg"
+       },
+       {
+         "id":144833,
+         "filter":"actor=144833",
+         "tag":"Greg Haberny",
+         "tagKey":"5d7768866f4521001eaaa7bf",
+         "role":"NYU Student"
+       },
+       {
+         "id":55632,
+         "filter":"actor=55632",
+         "tag":"Jackie Sandler",
+         "tagKey":"5d77682aeb5d26001f1de57d",
+         "count":7,
+         "role":"Waitress",
+         "thumb":"https://metadata-static.plex.tv/3/people/3c7e33185e312412393ec7f0f4ea2a7b.jpg"
+       },
+       {
+         "id":144834,
+         "filter":"actor=144834",
+         "tag":"George Hall",
+         "tagKey":"5d776842103a2d001f56acb5",
+         "role":"Elderly Driver",
+         "thumb":"https://metadata-static.plex.tv/people/5d776842103a2d001f56acb5.jpg"
+       },
+       {
+         "id":144835,
+         "filter":"actor=144835",
+         "tag":"Peggy Shay",
+         "tagKey":"5d77682ef59e580021897d98",
+         "role":"Lady at Tollbooth"
+       },
+       {
+         "id":144836,
+         "filter":"actor=144836",
+         "tag":"Alfonso Ramírez",
+         "tagKey":"5ffc62c6c95b49002c3f7a9f",
+         "role":"George (as Alfonso Ramirez)"
+       },
+       {
+         "id":144837,
+         "filter":"actor=144837",
+         "tag":"Salvatore Cavaliere",
+         "tagKey":"6397ea2be632b8f925238bda",
+         "role":"Angry Motorist"
+       },
+       {
+         "id":144838,
+         "filter":"actor=144838",
+         "tag":"Kelly Dugan",
+         "tagKey":"641d9134db4696ee1e7a2266",
+         "role":"Kelly"
+       },
+       {
+         "id":63366,
+         "filter":"actor=63366",
+         "tag":"Jared Sandler",
+         "tagKey":"5d776833eb5d26001f1e028a",
+         "count":2,
+         "role":"Jared",
+         "thumb":"https://metadata-static.plex.tv/people/5d776833eb5d26001f1e028a.jpg"
+       },
+       {
+         "id":144839,
+         "filter":"actor=144839",
+         "tag":"Jillian Sandler",
+         "tagKey":"641d91346ba1df1ac214037d",
+         "role":"Jillian"
+       },
+       {
+         "id":144840,
+         "filter":"actor=144840",
+         "tag":"Helen Lloyd Breed",
+         "tagKey":"5d77683cf59e5800218996bc",
+         "role":"Ms. Foote",
+         "thumb":"https://metadata-static.plex.tv/people/5d77683cf59e5800218996bc.jpg"
+       },
+       {
+         "id":144841,
+         "filter":"actor=144841",
+         "tag":"Chloé Hult",
+         "tagKey":"641d9134db4696ee1e7a2267",
+         "role":"Schoolteacher"
+       },
+       {
+         "id":144842,
+         "filter":"actor=144842",
+         "tag":"Carmen De Lavallade",
+         "tagKey":"5d77684e880197001ec97d5d",
+         "role":"Judge (as Carmen deLavallade)"
+       },
+       {
+         "id":60698,
+         "filter":"actor=60698",
+         "tag":"Steven Brill",
+         "tagKey":"5d77682585719b001f3a056b",
+         "count":3,
+         "role":"Castellucci",
+         "thumb":"https://metadata-static.plex.tv/people/5d77682585719b001f3a056b.jpg"
+       },
+       {
+         "id":118798,
+         "filter":"actor=118798",
+         "tag":"Deborah S. Craig",
+         "tagKey":"5d776833eb5d26001f1e0289",
+         "role":"Paralegal",
+         "thumb":"https://metadata-static.plex.tv/people/5d776833eb5d26001f1e0289.jpg"
+       },
+       {
+         "id":55924,
+         "filter":"actor=55924",
+         "tag":"Al Cerullo",
+         "tagKey":"5d776834eb5d26001f1e05b1",
+         "count":2,
+         "role":"Helicopter Pilot",
+         "thumb":"https://metadata-static.plex.tv/d/people/da4413e6e57434c77fc70110c86abc24.jpg"
+       },
+       {
+         "id":59504,
+         "filter":"actor=59504",
+         "tag":"Dennis Dugan",
+         "tagKey":"5d77682a3c3c2a001fbcbd2b",
+         "count":3,
+         "role":"Reluctant Trick-or-Treat Giver (uncredited)",
+         "thumb":"https://metadata-static.plex.tv/people/5d77682a3c3c2a001fbcbd2b.jpg"
+       },
+       {
+         "id":144843,
+         "filter":"actor=144843",
+         "tag":"Laurie Wallace",
+         "tagKey":"5d77682e103a2d001f565ebb",
+         "role":"Hooters Waitress (uncredited)",
+         "thumb":"https://metadata-static.plex.tv/people/5d77682e103a2d001f565ebb.jpg"
+       }
+     ],
+     "Producer":[
+       {
+         "id":139071,
+         "filter":"producer=139071",
+         "tag":"Sidney Ganis",
+         "tagKey":"5d7768258718ba001e3116a9",
+         "count":2,
+         "thumb":"https://metadata-static.plex.tv/9/people/95e96d15d54b5702ea7c52e9a5483c1f.jpg"
+       },
+       {
+         "id":55648,
+         "filter":"producer=55648",
+         "tag":"Jack Giarraputo",
+         "tagKey":"5d77682aeb5d26001f1de574",
+         "count":8,
+         "thumb":"https://metadata-static.plex.tv/people/5d77682aeb5d26001f1de574.jpg"
+       }
+     ]
+   }
+ }

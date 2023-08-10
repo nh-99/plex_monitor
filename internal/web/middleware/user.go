@@ -1,9 +1,9 @@
 package middleware
 
 import (
-	"plex_monitor/internal/database/models"
 	"context"
 	"net/http"
+	"plex_monitor/internal/database/models"
 
 	"github.com/go-chi/jwtauth"
 )
@@ -23,10 +23,15 @@ const (
 func CreateUserContext(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		var userForCtx models.User
+		var err error
 
 		_, claims, _ := jwtauth.FromContext(r.Context())
 		if userID, ok := claims[ClaimsUserIDKey]; ok {
-			userForCtx, _ = models.GetUser("", userID.(string)) // Convert user ID claim to string
+			userForCtx, err = models.GetUser(userID.(string), "") // Convert user ID claim to string
+
+			if err != nil {
+				panic(err)
+			}
 		}
 
 		// Return an anonymous user if the user hasn't been found
@@ -36,7 +41,5 @@ func CreateUserContext(next http.Handler) http.Handler {
 
 		userCtx := context.WithValue(r.Context(), ContextKeyUserID, userForCtx)
 		next.ServeHTTP(w, r.WithContext(userCtx))
-
-		return
 	})
 }

@@ -1,4 +1,4 @@
-package user
+package firehose
 
 import (
 	"os"
@@ -8,7 +8,7 @@ import (
 	"github.com/go-chi/jwtauth"
 )
 
-// Routes creates a REST router for the user API
+// Routes returns the router for the firehose endpoints
 func Routes() *chi.Mux {
 	router := chi.NewRouter()
 	tokenAuth := jwtauth.New("HS256", []byte(os.Getenv("SECRET_KEY")), nil)
@@ -26,14 +26,9 @@ func Routes() *chi.Mux {
 
 		// Custom middleware for X to add user to request context, for easy access
 		r.Use(middleware.CreateUserContext)
-	})
 
-	// Public endpoints
-	router.Group(func(r chi.Router) {
-		// Custom middleware for X to add user to request context, for easy access
-		r.Use(middleware.CreateUserContext)
-
-		r.Post("/login", PerformLogin)
+		// Private endpoints
+		r.Get("/", Firehose)
 	})
 
 	return router

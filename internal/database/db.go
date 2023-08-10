@@ -1,29 +1,37 @@
 package database
 
 import (
-	"database/sql"
-	"log"
-	"time"
+	"context"
 
-	_ "github.com/go-sql-driver/mysql"
+	"github.com/sirupsen/logrus"
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
+	"go.mongodb.org/mongo-driver/mongo/readpref"
 )
 
-var DB *sql.DB
+// DB is the global database connection
+var DB *mongo.Database
 
-func InitDB(dataSourceName string) {
+// Ctx is the global context
+var Ctx = context.Background()
+
+// InitDB initializes the database connection
+func InitDB(dataSourceName string, dbName string) {
 	var err error
-	DB, err = sql.Open("mysql", dataSourceName)
+	client, err := mongo.Connect(Ctx, options.Client().ApplyURI(dataSourceName))
 	if err != nil {
-		log.Panic(err)
+		logrus.Panic(err)
 	}
 
-	pingErr := DB.Ping()
+	pingErr := client.Ping(Ctx, readpref.PrimaryPreferred())
 	if pingErr != nil {
-		log.Fatal(pingErr)
+		logrus.Fatal(pingErr)
 	}
 
-	// Set important connection params
-	DB.SetConnMaxLifetime(time.Minute * 3)
-	DB.SetMaxOpenConns(10)
-	DB.SetMaxIdleConns(10)
+	DB = client.Database(dbName)
+}
+
+// CloseDB closes the database connection
+func CloseDB() {
+	DB.Client().Disconnect(Ctx)
 }

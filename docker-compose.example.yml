@@ -1,0 +1,17 @@
+version: '3.3'
+services:
+    monitor:
+        build: .
+        container_name: monitor
+        environment:
+            - DATABASE_URL=mongodb://user:pass@mongo:27017
+        restart: unless-stopped
+    mongo:
+        image: mongo:latest
+        container_name: mongo
+        volumes:
+            - ./mongo/data:/data/db
+        environment:
+            - MONGO_INITDB_ROOT_USERNAME=user
+            - MONGO_INITDB_ROOT_PASSWORD=pass
+        restart: unless-stopped
