@@ -58,7 +58,7 @@ func TestFirehose(t *testing.T) {
 
 	// We create a ResponseRecorder (which satisfies http.ResponseWriter) to record the response.
 	rr := httptest.NewRecorder()
-	handler := http.HandlerFunc(webhook.WebhookEntry)
+	handler := http.HandlerFunc(webhook.Entry)
 
 	// Our handlers satisfy http.Handler, so we can call their ServeHTTP method directly and pass in our Request and ResponseRecorder.
 	handler.ServeHTTP(rr, req)
@@ -103,7 +103,7 @@ func TestFirehose(t *testing.T) {
 
 	req.Body = io.NopCloser(bytes.NewBufferString(jsonString))
 
-	handler = http.HandlerFunc(webhook.WebhookEntry)
+	handler = http.HandlerFunc(webhook.Entry)
 
 	// Our handlers satisfy http.Handler, so we can call their ServeHTTP method directly and pass in our Request and ResponseRecorder.
 	handler.ServeHTTP(rr, req)

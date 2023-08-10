@@ -19,7 +19,7 @@ import (
 
 var log logrus.FieldLogger
 
-func Routes() *chi.Mux {
+func routes() *chi.Mux {
 	router := chi.NewRouter()
 	router.Use(
 		logger.Logger("router", log),                  // Log API request calls
@@ -62,7 +62,7 @@ func initLogger() {
 
 func main() {
 	initLogger()
-	router := Routes()
+	router := routes()
 	database.InitDB(os.Getenv("DATABASE_URL"), os.Getenv("DATABASE_NAME"))
 
 	logrus.Info("Starting Plex Monitor Web...")

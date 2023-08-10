@@ -1,13 +1,14 @@
 package user
 
 import (
-	"plex_monitor/internal/web/middleware"
 	"os"
+	"plex_monitor/internal/web/middleware"
 
 	"github.com/go-chi/chi"
 	"github.com/go-chi/jwtauth"
 )
 
+// Routes creates a REST router for the user API
 func Routes() *chi.Mux {
 	router := chi.NewRouter()
 	tokenAuth := jwtauth.New("HS256", []byte(os.Getenv("SECRET_KEY")), nil)

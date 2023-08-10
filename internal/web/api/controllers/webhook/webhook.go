@@ -13,8 +13,8 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 )
 
-// WebhookEntry is the endpoint that handles the inital request for webhooks and routes down to the service-specific func.
-func WebhookEntry(w http.ResponseWriter, r *http.Request) {
+// Entry is the endpoint that handles the inital request for webhooks and routes down to the service-specific func.
+func Entry(w http.ResponseWriter, r *http.Request) {
 	l := logrus.WithFields(logrus.Fields{
 		"endpoint": r.URL.Path,
 		"service":  r.URL.Query().Get("service"),
@@ -56,11 +56,12 @@ func WebhookEntry(w http.ResponseWriter, r *http.Request) {
 	render.JSON(w, r, webhookResponse)
 }
 
+// ServiceMonitor is the interface for the service-specific webhook functions.
 type ServiceMonitor interface {
 	fire(*logrus.Entry, http.ResponseWriter, *http.Request) error
 }
 
-// Executes the functions for data collection & storage.
+// MonitoringService is the struct for the service-specific webhook functions.
 type MonitoringService struct {
 	monitor ServiceMonitor
 }
@@ -73,19 +74,19 @@ func (m MonitoringService) fireHooks(l *logrus.Entry, w http.ResponseWriter, r *
 
 func getService(svcName string) MonitoringService {
 	switch svcName {
-	case REPOSITORY_PLEX_NAME:
+	case RepositoryPlexName:
 		return MonitoringService{
 			monitor: PlexMonitoringService{},
 		}
-	case REPOSITORY_RADARR_WEBHOOK:
+	case RepositoryRadarrWebhook:
 		return MonitoringService{
 			monitor: RadarrMonitoringService{},
 		}
-	case REPOSITORY_SONARR_WEBHOOK:
+	case RepositorySonarrWebhook:
 		return MonitoringService{
 			monitor: SonarrMonitoringService{},
 		}
-	case REPOSITORY_OMBI_WEBHOOK:
+	case RepositoryOmbiWebhook:
 		return MonitoringService{
 			monitor: OmbiMonitoringService{},
 		}

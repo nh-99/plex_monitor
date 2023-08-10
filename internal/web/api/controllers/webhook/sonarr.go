@@ -9,15 +9,12 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-// SonarrEventType
 const (
-	REPOSITORY_SONARR_WEBHOOK        = "sonarr"
-	SonarrGrab                string = "Grab"
-	SonarrDownload            string = "Download"
-	SonarrMovieAdded          string = "MovieAdded"
-	SonarrApplicationUpdate   string = "ApplicationUpdate"
+	// RepositorySonarrWebhook is the name of the repository for the Sonarr webhook
+	RepositorySonarrWebhook = "sonarr"
 )
 
+// SonarrMonitoringService is the struct for the Sonarr webhook
 type SonarrMonitoringService struct{}
 
 // SonarrWebhook is the endpoint that handles the inital request for webhooks and routes down to the service-specific func.

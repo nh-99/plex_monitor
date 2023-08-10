@@ -10,9 +10,11 @@ import (
 )
 
 const (
-	REPOSITORY_PLEX_NAME = "plex"
+	// RepositoryPlexName is the name of the repository for the Plex webhook
+	RepositoryPlexName = "plex"
 )
 
+// PlexMonitoringService is the struct for the Plex webhook
 type PlexMonitoringService struct{}
 
 // PlexWebhook is the endpoint that handles the inital request for webhooks and routes down to the service-specific func.

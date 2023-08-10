@@ -8,6 +8,7 @@ import (
 	"github.com/go-chi/jwtauth"
 )
 
+// Routes returns the router for the firehose endpoints
 func Routes() *chi.Mux {
 	router := chi.NewRouter()
 	tokenAuth := jwtauth.New("HS256", []byte(os.Getenv("SECRET_KEY")), nil)
