@@ -3,6 +3,7 @@ package models
 import (
 	"encoding/json"
 	"net/http"
+	"time"
 )
 
 const (
@@ -12,6 +13,7 @@ const (
 
 // PlexWebhookData is the struct that represents the data sent by Plex webhooks
 type PlexWebhookData struct {
+	ID      string `json:"-" bson:"_id"`
 	Event   string `json:"event" bson:"event"`
 	User    bool   `json:"user" bson:"user"`
 	Owner   bool   `json:"owner" bson:"owner"`
@@ -113,6 +115,7 @@ type PlexWebhookData struct {
 			Thumb  string `json:"thumb" bson:"thumb"`
 		} `json:"Producer" bson:"Producer"`
 	} `json:"Metadata" bson:"Metadata"`
+	CreatedAt time.Time `json:"createdAt" bson:"createdAt"`
 }
 
 // ToJSON converts the PlexWebhookData struct to a JSON string
@@ -139,6 +142,9 @@ func (p *PlexWebhookData) FromHTTPRequest(r *http.Request) error {
 	if err != nil {
 		return err
 	}
+
+	// Set the CreatedAt field to the current time
+	p.CreatedAt = time.Now()
 
 	return nil
 }

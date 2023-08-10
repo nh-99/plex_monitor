@@ -42,7 +42,7 @@ func GetCliApp() *cli.App {
 			{
 				Name:    "create",
 				Aliases: []string{"c"},
-				Usage:   "Create a new object in the system",
+				Usage:   "🎨 Create a new object in the system",
 				Subcommands: []*cli.Command{
 					getUserCreateCmd(),
 					{
@@ -59,7 +59,7 @@ func GetCliApp() *cli.App {
 			{
 				Name:    "fetch",
 				Aliases: []string{"f"},
-				Usage:   "Fetches an object from the system",
+				Usage:   "🫳 Fetches an object from the system",
 				Subcommands: []*cli.Command{
 					getDumpWireFileCmd(),
 				},
@@ -67,7 +67,7 @@ func GetCliApp() *cli.App {
 			{
 				Name:    "list",
 				Aliases: []string{"l"},
-				Usage:   "Lists objects from the system",
+				Usage:   "📝 Lists objects from the system",
 				Subcommands: []*cli.Command{
 					getListFilesCmd(),
 				},
@@ -75,9 +75,17 @@ func GetCliApp() *cli.App {
 			{
 				Name:    "debug",
 				Aliases: []string{"d"},
-				Usage:   "Run command specific to debugging the system",
+				Usage:   "🛠️ Run command specific to debugging the system",
 				Subcommands: []*cli.Command{
 					getReplayWireFileCmd(),
+				},
+			},
+			{
+				Name:    "fix",
+				Aliases: []string{"fx"},
+				Usage:   "⛈️ Runs fixes against the system",
+				Subcommands: []*cli.Command{
+					getFixCreatedAtTimesCommand(),
 				},
 			},
 		},

@@ -3,6 +3,7 @@ package models
 import (
 	"encoding/json"
 	"net/http"
+	"time"
 )
 
 const (
@@ -250,6 +251,7 @@ type TvRelease struct {
 
 // SonarrWebhookData represents the JSON data structure.
 type SonarrWebhookData struct {
+	ID                 string         `json:"-" bson:"_id"`
 	Series             Series         `json:"series" bson:"series"`
 	Episodes           []Episode      `json:"episodes" bson:"episodes"`
 	Release            *TvRelease     `json:"release,omitempty" bson:"release,omitempty"`
@@ -261,6 +263,7 @@ type SonarrWebhookData struct {
 	DeletedFiles       *[]EpisodeFile `json:"deletedFiles,omitempty" bson:"deletedFiles,omitempty"`
 	DeleteReason       *string        `json:"deleteReason,omitempty" bson:"deleteReason,omitempty"`
 	EventType          string         `json:"eventType" bson:"eventType"`
+	CreatedAt          time.Time      `json:"createdAt" bson:"createdAt"`
 }
 
 // ToJSON returns the JSON encoding of the struct.
@@ -284,5 +287,6 @@ func (p *SonarrWebhookData) FromHTTPRequest(r *http.Request) error {
 	if err != nil {
 		return err
 	}
+	p.CreatedAt = time.Now()
 	return nil
 }

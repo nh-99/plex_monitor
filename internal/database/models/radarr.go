@@ -3,6 +3,7 @@ package models
 import (
 	"encoding/json"
 	"net/http"
+	"time"
 )
 
 const (
@@ -12,6 +13,7 @@ const (
 
 // RadarrWebhookData is the struct that represents the data that is sent from Radarr.
 type RadarrWebhookData struct {
+	ID                 string        `json:"-" bson:"_id"`
 	Movie              Movie         `json:"movie" bson:"movie"`
 	RemoteMovie        *RemoteMovie  `json:"remoteMovie,omitempty" bson:"remoteMovie,omitempty"`
 	Release            *MovieRelease `json:"release,omitempty" bson:"release,omitempty"`
@@ -23,6 +25,7 @@ type RadarrWebhookData struct {
 	EventType          string        `json:"eventType" bson:"eventType"`
 	InstanceName       string        `json:"instanceName" bson:"instanceName"`
 	ApplicationURL     string        `json:"applicationUrl" bson:"applicationUrl"`
+	CreatedAt          time.Time     `json:"createdAt" bson:"createdAt"`
 }
 
 // Movie is the struct that represents the movie data that is sent from Radarr.
@@ -112,5 +115,6 @@ func (p *RadarrWebhookData) FromHTTPRequest(r *http.Request) error {
 	if err != nil {
 		return err
 	}
+	p.CreatedAt = time.Now()
 	return nil
 }
