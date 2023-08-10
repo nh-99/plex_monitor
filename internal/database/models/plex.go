@@ -5,6 +5,11 @@ import (
 	"net/http"
 )
 
+const (
+	// PlexCollectionName is the name of the collection in the database for Plex webhooks
+	PlexCollectionName = "plex_webhook_data"
+)
+
 // PlexWebhookData is the struct that represents the data sent by Plex webhooks
 type PlexWebhookData struct {
 	Event   string `json:"event" bson:"event"`

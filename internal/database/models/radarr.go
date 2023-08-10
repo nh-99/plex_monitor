@@ -5,6 +5,11 @@ import (
 	"net/http"
 )
 
+const (
+	// RadarrCollectionName is the name of the collection in the database for Radarr webhook data
+	RadarrCollectionName = "radarr_webhook_data"
+)
+
 // RadarrWebhookData is the struct that represents the data that is sent from Radarr.
 type RadarrWebhookData struct {
 	Movie              Movie         `json:"movie" bson:"movie"`

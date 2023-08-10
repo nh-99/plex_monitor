@@ -113,7 +113,7 @@ func TestWebhookWithPlexService(t *testing.T) {
 	}
 
 	// Assert that we stored the event in the database
-	evt, err := database.DB.Collection("plex_webhook_data").CountDocuments(database.Ctx, bson.M{"event": "media.pause"})
+	evt, err := database.DB.Collection(models.PlexCollectionName).CountDocuments(database.Ctx, bson.M{"event": "media.pause"})
 	assert.NoError(t, err)
 	assert.Equal(t, int64(1), evt)
 
@@ -159,7 +159,53 @@ func TestWebhookWithSonarrService(t *testing.T) {
 	assert.Equal(t, http.StatusOK, rr.Code)
 
 	// Assert that we stored the event in the database
-	count, err := database.DB.Collection("sonarr_webhook_data").CountDocuments(database.Ctx, bson.M{"series.id": 73})
+	count, err := database.DB.Collection(models.SonarrCollectionName).CountDocuments(database.Ctx, bson.M{"series.id": 73})
+	assert.NoError(t, err)
+	assert.Equal(t, int64(1), count)
+
+	// Assert that we captured the raw data
+	test := bson.M{"metadata.service": "sonarr"}
+	raw, err := models.CountFilesInBucket(models.RawRequestWiresBucket, test)
+	assert.NoError(t, err)
+	assert.Equal(t, int64(1), raw)
+}
+
+func TestWebhookWithSonarrServiceHealth(t *testing.T) {
+	setup()
+	defer teardown()
+
+	// Create a request to pass to our
+	// handler. We don't have any query parameters for now, so we'll
+	// pass 'nil' as the third parameter.
+	req, err := http.NewRequest("POST", "/webhook?service=sonarr", nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	// Load json file and add it to the request body
+	file, err := os.Open("../../../../../test/sonarr_webhook_response_sample_health_status.json")
+	assert.NoError(t, err)
+	defer file.Close()
+	// Read the file contents
+	contents, err := io.ReadAll(file)
+	assert.NoError(t, err)
+	// Convert byte slice to string
+	jsonString := string(contents)
+
+	req.Body = io.NopCloser(bytes.NewBufferString(jsonString))
+
+	// We create a ResponseRecorder (which satisfies http.ResponseWriter) to record the response.
+	rr := httptest.NewRecorder()
+	handler := http.HandlerFunc(Entry)
+
+	// Our handlers satisfy http.Handler, so we can call their ServeHTTP method directly and pass in our Request and ResponseRecorder.
+	handler.ServeHTTP(rr, req)
+
+	// Assert that the response was what we expected using testify
+	assert.Equal(t, http.StatusOK, rr.Code)
+
+	// Assert that we stored the event in the database
+	count, err := database.DB.Collection(models.SonarrCollectionName).CountDocuments(database.Ctx, bson.M{"message": "Indexers unavailable due to failures: indexerName"})
 	assert.NoError(t, err)
 	assert.Equal(t, int64(1), count)
 
@@ -205,7 +251,53 @@ func TestWebhookWithRadarrService(t *testing.T) {
 	assert.Equal(t, http.StatusOK, rr.Code)
 
 	// Assert that we stored the event in the database
-	count, err := database.DB.Collection("radarr_webhook_data").CountDocuments(database.Ctx, bson.M{"movie.id": 686})
+	count, err := database.DB.Collection(models.RadarrCollectionName).CountDocuments(database.Ctx, bson.M{"movie.id": 686})
+	assert.NoError(t, err)
+	assert.Equal(t, int64(1), count)
+
+	// Assert that we captured the raw data
+	test := bson.M{"metadata.service": "radarr"}
+	raw, err := models.CountFilesInBucket(models.RawRequestWiresBucket, test)
+	assert.NoError(t, err)
+	assert.Equal(t, int64(1), raw)
+}
+
+func TestWebhookWithRadarrServiceHealth(t *testing.T) {
+	setup()
+	defer teardown()
+
+	// Create a request to pass to our
+	// handler. We don't have any query parameters for now, so we'll
+	// pass 'nil' as the third parameter.
+	req, err := http.NewRequest("POST", "/webhook?service=radarr", nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	// Load json file and add it to the request body
+	file, err := os.Open("../../../../../test/radarr_webhook_response_sample_health_status.json")
+	assert.NoError(t, err)
+	defer file.Close()
+	// Read the file contents
+	contents, err := io.ReadAll(file)
+	assert.NoError(t, err)
+	// Convert byte slice to string
+	jsonString := string(contents)
+
+	req.Body = io.NopCloser(bytes.NewBufferString(jsonString))
+
+	// We create a ResponseRecorder (which satisfies http.ResponseWriter) to record the response.
+	rr := httptest.NewRecorder()
+	handler := http.HandlerFunc(Entry)
+
+	// Our handlers satisfy http.Handler, so we can call their ServeHTTP method directly and pass in our Request and ResponseRecorder.
+	handler.ServeHTTP(rr, req)
+
+	// Assert that the response was what we expected using testify
+	assert.Equal(t, http.StatusOK, rr.Code)
+
+	// Assert that we stored the event in the database
+	count, err := database.DB.Collection(models.RadarrCollectionName).CountDocuments(database.Ctx, bson.M{"message": "Indexers unavailable due to failures: indexerName"})
 	assert.NoError(t, err)
 	assert.Equal(t, int64(1), count)
 
@@ -251,7 +343,7 @@ func TestWebhookWithOmbiService(t *testing.T) {
 	assert.Equal(t, http.StatusOK, rr.Code)
 
 	// Assert that we stored the event in the database
-	count, err := database.DB.Collection("ombi_webhook_data").CountDocuments(database.Ctx, bson.M{"requestId": "1234"})
+	count, err := database.DB.Collection(models.OmbiCollectionName).CountDocuments(database.Ctx, bson.M{"requestId": "1234"})
 	assert.NoError(t, err)
 	assert.Equal(t, int64(1), count)
 

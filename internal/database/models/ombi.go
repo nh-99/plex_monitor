@@ -5,6 +5,11 @@ import (
 	"net/http"
 )
 
+const (
+	// OmbiCollectionName is the name of the collection in the database for Ombi
+	OmbiCollectionName = "ombi_webhook_data"
+)
+
 // OmbiWebhookData is the struct that represents the data sent by Ombi
 type OmbiWebhookData struct {
 	RequestID                        string `json:"requestId" bson:"requestId"`

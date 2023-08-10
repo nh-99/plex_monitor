@@ -5,6 +5,11 @@ import (
 	"net/http"
 )
 
+const (
+	// SonarrCollectionName is the name of the collection in the database for Sonarr webhook data.
+	SonarrCollectionName = "sonarr_webhook_data"
+)
+
 // Episode represents an episode of the TV series.
 type Episode struct {
 	ID            int    `json:"id" bson:"id"`

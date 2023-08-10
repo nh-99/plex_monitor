@@ -32,7 +32,7 @@ func (pms PlexMonitoringService) fire(l *logrus.Entry, w http.ResponseWriter, r 
 		return fmt.Errorf("unable to parse request (bad request data): %s", err)
 	}
 
-	_, err = database.DB.Collection("plex_webhook_data").InsertOne(database.Ctx, plexWebhookRequest)
+	_, err = database.DB.Collection(models.PlexCollectionName).InsertOne(database.Ctx, plexWebhookRequest)
 	if err != nil {
 		return fmt.Errorf("unable to write to database: %s", err)
 	}
