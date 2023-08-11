@@ -12,7 +12,7 @@ import (
 
 // Firehose is the endpoint that streams data to the client
 func Firehose(w http.ResponseWriter, r *http.Request) {
-	opts := options.Find().SetLimit(1000).SetSort(bson.D{{Key: "created_at", Value: -1}})
+	opts := options.Find().SetLimit(1000).SetSort(bson.D{{Key: "createdAt", Value: -1}})
 	cursor, err := database.DB.Collection(database.WebhookCollectionName).Find(context.Background(), bson.D{}, opts)
 	if err != nil {
 		panic(err)

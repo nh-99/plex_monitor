@@ -38,7 +38,7 @@ func InitDB(dataSourceName string, dbName string) {
 func setupIndexes() {
 	// Setup index on created_at
 	indexModel := mongo.IndexModel{
-		Keys: bson.D{{Key: "created_at", Value: -1}},
+		Keys: bson.D{{Key: "createdAt", Value: -1}},
 	}
 	_, err := DB.Collection(WebhookCollectionName).Indexes().CreateOne(Ctx, indexModel)
 	if err != nil {

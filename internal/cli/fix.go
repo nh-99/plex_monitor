@@ -27,7 +27,7 @@ func getFixCreatedAtTimesCommand() *cli.Command {
 			}
 
 			fmt.Printf("Fixing %s\n", collectionName)
-			c1, _ := db.Collection(collectionName).Find(database.Ctx, bson.M{"created_at": bson.M{"$exists": false}}, nil)
+			c1, _ := db.Collection(collectionName).Find(database.Ctx, bson.M{"createdAt": bson.M{"$exists": false}}, nil)
 			for c1.Next(database.Ctx) {
 				var result bson.M
 				err := c1.Decode(&result)
@@ -40,8 +40,8 @@ func getFixCreatedAtTimesCommand() *cli.Command {
 				objectID, _ := primitive.ObjectIDFromHex(result["_id"].(primitive.ObjectID).Hex())
 				timestamp := objectID.Timestamp()
 
-				// Set the created_at time
-				update := bson.M{"$set": bson.M{"created_at": timestamp}}
+				// Set the createdAt time
+				update := bson.M{"$set": bson.M{"createdAt": timestamp}}
 				db.Collection(collectionName).UpdateOne(database.Ctx, bson.M{"_id": result["_id"]}, update)
 
 				fmt.Printf("Fixed record with id %s\n", result["_id"])
