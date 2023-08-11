@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/sirupsen/logrus"
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"go.mongodb.org/mongo-driver/mongo/readpref"
@@ -29,6 +30,29 @@ func InitDB(dataSourceName string, dbName string) {
 	}
 
 	DB = client.Database(dbName)
+
+	setupIndexes()
+}
+
+// setupIndexes sets up the indexes for the database
+func setupIndexes() {
+	// Setup index on created_at
+	indexModel := mongo.IndexModel{
+		Keys: bson.D{{Key: "created_at", Value: -1}},
+	}
+	_, err := DB.Collection(WebhookCollectionName).Indexes().CreateOne(Ctx, indexModel)
+	if err != nil {
+		logrus.Fatal(err)
+	}
+
+	// Setup index on serviceName
+	indexModel = mongo.IndexModel{
+		Keys: bson.D{{Key: "serviceName", Value: 1}},
+	}
+	_, err = DB.Collection(WebhookCollectionName).Indexes().CreateOne(Ctx, indexModel)
+	if err != nil {
+		logrus.Fatal(err)
+	}
 }
 
 // CloseDB closes the database connection

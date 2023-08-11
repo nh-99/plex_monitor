@@ -4,6 +4,11 @@ COMMANDS := web cli
 # Build all commands
 build: $(COMMANDS)
 
+# Test all directories
+test:
+	@echo "Testing..."
+	@go test ./...
+
 # Build a specific command
 $(COMMANDS):
 	@echo "Building $@..."

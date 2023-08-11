@@ -113,7 +113,7 @@ func TestWebhookWithPlexService(t *testing.T) {
 	}
 
 	// Assert that we stored the event in the database
-	evt, err := database.DB.Collection(models.WebhookCollectionName).CountDocuments(database.Ctx, bson.M{"event": "media.pause"})
+	evt, err := database.DB.Collection(database.WebhookCollectionName).CountDocuments(database.Ctx, bson.M{"event": "media.pause"})
 	assert.NoError(t, err)
 	assert.Equal(t, int64(1), evt)
 
@@ -159,7 +159,7 @@ func TestWebhookWithSonarrService(t *testing.T) {
 	assert.Equal(t, http.StatusOK, rr.Code)
 
 	// Assert that we stored the event in the database
-	count, err := database.DB.Collection(models.WebhookCollectionName).CountDocuments(database.Ctx, bson.M{"series.id": 73})
+	count, err := database.DB.Collection(database.WebhookCollectionName).CountDocuments(database.Ctx, bson.M{"series.id": 73})
 	assert.NoError(t, err)
 	assert.Equal(t, int64(1), count)
 
@@ -205,7 +205,7 @@ func TestWebhookWithSonarrServiceHealth(t *testing.T) {
 	assert.Equal(t, http.StatusOK, rr.Code)
 
 	// Assert that we stored the event in the database
-	count, err := database.DB.Collection(models.WebhookCollectionName).CountDocuments(database.Ctx, bson.M{"message": "Indexers unavailable due to failures: indexerName"})
+	count, err := database.DB.Collection(database.WebhookCollectionName).CountDocuments(database.Ctx, bson.M{"message": "Indexers unavailable due to failures: indexerName"})
 	assert.NoError(t, err)
 	assert.Equal(t, int64(1), count)
 
@@ -251,7 +251,7 @@ func TestWebhookWithRadarrService(t *testing.T) {
 	assert.Equal(t, http.StatusOK, rr.Code)
 
 	// Assert that we stored the event in the database
-	count, err := database.DB.Collection(models.WebhookCollectionName).CountDocuments(database.Ctx, bson.M{"movie.id": 686})
+	count, err := database.DB.Collection(database.WebhookCollectionName).CountDocuments(database.Ctx, bson.M{"movie.id": 686})
 	assert.NoError(t, err)
 	assert.Equal(t, int64(1), count)
 
@@ -297,7 +297,7 @@ func TestWebhookWithRadarrServiceHealth(t *testing.T) {
 	assert.Equal(t, http.StatusOK, rr.Code)
 
 	// Assert that we stored the event in the database
-	count, err := database.DB.Collection(models.WebhookCollectionName).CountDocuments(database.Ctx, bson.M{"message": "Indexers unavailable due to failures: indexerName"})
+	count, err := database.DB.Collection(database.WebhookCollectionName).CountDocuments(database.Ctx, bson.M{"message": "Indexers unavailable due to failures: indexerName"})
 	assert.NoError(t, err)
 	assert.Equal(t, int64(1), count)
 
@@ -343,7 +343,7 @@ func TestWebhookWithOmbiService(t *testing.T) {
 	assert.Equal(t, http.StatusOK, rr.Code)
 
 	// Assert that we stored the event in the database
-	count, err := database.DB.Collection(models.WebhookCollectionName).CountDocuments(database.Ctx, bson.M{"requestId": "1234"})
+	count, err := database.DB.Collection(database.WebhookCollectionName).CountDocuments(database.Ctx, bson.M{"requestId": "1234"})
 	assert.NoError(t, err)
 	assert.Equal(t, int64(1), count)
 
