@@ -8,7 +8,6 @@ import (
 
 // PlexWebhookData is the struct that represents the data sent by Plex webhooks
 type PlexWebhookData struct {
-	ID      string `json:"-" bson:"_id"`
 	Event   string `json:"event" bson:"event"`
 	User    bool   `json:"user" bson:"user"`
 	Owner   bool   `json:"owner" bson:"owner"`

@@ -8,7 +8,6 @@ import (
 
 // OmbiWebhookData is the struct that represents the data sent by Ombi
 type OmbiWebhookData struct {
-	ID                               string    `json:"-" bson:"_id"`
 	RequestID                        string    `json:"requestId" bson:"requestId"`
 	RequestedUser                    string    `json:"requestedUser" bson:"requestedUser"`
 	Title                            string    `json:"title" bson:"title"`

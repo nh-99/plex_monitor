@@ -10,7 +10,6 @@ import (
 
 // ServarrHealthData is the struct that represents the health data that is sent from Radarr.
 type ServarrHealthData struct {
-	ID             string    `json:"-" bson:"_id"`
 	Level          string    `json:"level" bson:"level"`
 	Message        string    `json:"message" bson:"message"`
 	Type           string    `json:"type" bson:"type"`

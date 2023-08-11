@@ -246,7 +246,6 @@ type TvRelease struct {
 
 // SonarrWebhookData represents the JSON data structure.
 type SonarrWebhookData struct {
-	ID                 string         `json:"-" bson:"_id"`
 	Series             Series         `json:"series" bson:"series"`
 	Episodes           []Episode      `json:"episodes" bson:"episodes"`
 	Release            *TvRelease     `json:"release,omitempty" bson:"release,omitempty"`

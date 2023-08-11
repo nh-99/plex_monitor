@@ -8,7 +8,6 @@ import (
 
 // RadarrWebhookData is the struct that represents the data that is sent from Radarr.
 type RadarrWebhookData struct {
-	ID                 string        `json:"-" bson:"_id"`
 	Movie              Movie         `json:"movie" bson:"movie"`
 	RemoteMovie        *RemoteMovie  `json:"remoteMovie,omitempty" bson:"remoteMovie,omitempty"`
 	Release            *MovieRelease `json:"release,omitempty" bson:"release,omitempty"`
