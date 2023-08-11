@@ -1,4 +1,4 @@
-package models
+package database
 
 const (
 	// WebhookCollectionName is the name of the collection for the webhook data

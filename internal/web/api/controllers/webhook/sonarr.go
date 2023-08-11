@@ -55,7 +55,7 @@ func (rms SonarrMonitoringService) fire(l *logrus.Entry, w http.ResponseWriter, 
 		healthData.ServiceName = "sonarr"
 
 		// Store the data in the database
-		_, err := database.DB.Collection(models.WebhookCollectionName).InsertOne(database.Ctx, healthData)
+		_, err := database.DB.Collection(database.WebhookCollectionName).InsertOne(database.Ctx, healthData)
 		if err != nil {
 			return fmt.Errorf("could not store data: %w", err)
 		}
@@ -64,7 +64,7 @@ func (rms SonarrMonitoringService) fire(l *logrus.Entry, w http.ResponseWriter, 
 		return nil
 	}
 
-	_, err = database.DB.Collection(models.WebhookCollectionName).InsertOne(database.Ctx, sonarrWebhookData)
+	_, err = database.DB.Collection(database.WebhookCollectionName).InsertOne(database.Ctx, sonarrWebhookData)
 	if err != nil {
 		return fmt.Errorf("unable to write to database: %s", err)
 	}
