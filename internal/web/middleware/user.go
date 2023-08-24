@@ -2,6 +2,7 @@ package middleware
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"plex_monitor/internal/database/models"
 
@@ -25,8 +26,11 @@ func CreateUserContext(next http.Handler) http.Handler {
 		var userForCtx models.User
 		var err error
 
+		fmt.Printf("Cookies: %v\n", r.Cookies())
+
 		_, claims, _ := jwtauth.FromContext(r.Context())
 		if userID, ok := claims[ClaimsUserIDKey]; ok {
+			fmt.Printf("User ID: %v\n", userID)
 			userForCtx, err = models.GetUser(userID.(string), "") // Convert user ID claim to string
 
 			if err != nil {

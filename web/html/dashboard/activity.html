@@ -1,0 +1,217 @@
+{{define "title"}}Activity{{end}}
+{{define "body"}}
+<div class="page">
+  {{template "navbar" .}}
+  <div class="page-wrapper">
+    <!-- Page header -->
+    <div class="page-header d-print-none">
+      <div class="container-xl">
+        <div class="row g-2 align-items-center">
+          <div class="col">
+            <!-- Page pre-title -->
+            <div class="page-pretitle">
+              Dashboard
+            </div>
+            <h2 class="page-title">
+              Activity
+            </h2>
+          </div>
+          <!-- Page title actions -->
+          <div class="col-auto ms-auto d-print-none">
+            <div class="mb-3">
+              <div class="btn-group w-100"role="group">
+                <input type="radio" class="btn-check" name="limit" id="limit-10" autocomplete="off" checked>
+                <label for="limit-10" type="button" class="btn">10</label>
+                <input type="radio" class="btn-check" name="limit" id="limit-50" autocomplete="off">
+                <label for="limit-50" type="button" class="btn">50</label>
+                <input type="radio" class="btn-check" name="limit" id="limit-100" autocomplete="off">
+                <label for="limit-100" type="button" class="btn">100</label>
+                <input type="radio" class="btn-check" name="limit" id="limit-250" autocomplete="off">
+                <label for="limit-250" type="button" class="btn">250</label>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Page body -->
+    <div class="page-body">
+      <div class="container-xl">
+        <div class="row justify-content-center">
+          <div class="col-8">
+            <div class="card">
+              <div class="card-body">
+                <div class="divide-y">
+                  {{ range .Activity }}
+                    <div>
+                      <div class="row">
+                        <div class="col-auto">
+                          <span class="avatar">{{ .ServiceName }}</span>
+                        </div>
+                        <div class="col">
+                          <div class="text-truncate">
+                            {{ .Summary }}
+                          </div>
+                          <div class="text-secondary">{{ .FormattedTimeAgo }}</div>
+                        </div>
+                        <!-- <div class="col-auto align-self-center">
+                          <div class="badge bg-primary"></div>
+                        </div> -->
+                      </div>
+                    </div>
+                  {{ end }}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="d-flex justify-content-around mt-4">
+        <ul class="pagination">
+          <input id="numberOfItems" type="hidden" value="{{ .ActivityCount }}" />
+          <li id="previous-page" class="page-item">
+            <a class="page-link" href="#" tabindex="-1" aria-disabled="true">
+              <!-- Download SVG icon from http://tabler-icons.io/i/chevron-left -->
+              <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M15 6l-6 6l6 6" /></svg>
+              prev
+            </a>
+          </li>
+          <li class="page-item"><a class="page-link" href="#">1</a></li>
+          <li class="page-item"><a class="page-link" href="#">2</a></li>
+          <li class="page-item"><a class="page-link" href="#">3</a></li>
+          <li class="page-item"><a class="page-link" href="#">4</a></li>
+          <li class="page-item"><a class="page-link" href="#">5</a></li>
+          <li id="next-page" class="page-item">
+            <a class="page-link" href="#">
+              next <!-- Download SVG icon from http://tabler-icons.io/i/chevron-right -->
+              <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M9 6l6 6l-6 6" /></svg>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+    {{template "footer" .}}
+  </div>
+</div>
+{{end}}
+{{define "scripts"}}
+<script>
+  var searchParams = new URLSearchParams(window.location.search)
+  var limit = 10
+  
+  // Get limit from URL
+  if (searchParams.has("limit")) {
+    limit = parseInt(searchParams.get("limit"))
+    $("#limit-" + limit).prop("checked", true)
+  }
+
+  $("[id^=limit-]").click(function() {
+    limit = $(this).attr("id").split("-")[1]
+    searchParams.set("limit", limit)
+    window.location.search = searchParams.toString()
+  })
+</script>
+<script>
+// Returns an array of maxLength (or less) page numbers
+// where a 0 in the returned array denotes a gap in the series.
+// Parameters:
+//   totalPages:     total number of pages
+//   page:           current page
+//   maxLength:      maximum size of returned array
+function getPageList(totalPages, page, maxLength) {
+    if (maxLength < 5) throw "maxLength must be at least 5";
+
+    function range(start, end) {
+        return Array.from(Array(end - start + 1), (_, i) => i + start); 
+    }
+
+    var sideWidth = maxLength < 9 ? 1 : 2;
+    var leftWidth = (maxLength - sideWidth*2 - 3) >> 1;
+    var rightWidth = (maxLength - sideWidth*2 - 2) >> 1;
+    if (totalPages <= maxLength) {
+        // no breaks in list
+        return range(1, totalPages);
+    }
+    if (page <= maxLength - sideWidth - 1 - rightWidth) {
+        // no break on left of page
+        return range(1, maxLength - sideWidth - 1)
+            .concat(0, range(totalPages - sideWidth + 1, totalPages));
+    }
+    if (page >= totalPages - sideWidth - 1 - rightWidth) {
+        // no break on right of page
+        return range(1, sideWidth)
+            .concat(0, range(totalPages - sideWidth - 1 - rightWidth - leftWidth, totalPages));
+    }
+    // Breaks on both sides
+    return range(1, sideWidth)
+        .concat(0, range(page - leftWidth, page + rightWidth),
+                0, range(totalPages - sideWidth + 1, totalPages));
+}
+
+// Below is an example use of the above function.
+$(function () {
+    // Number of items and limits the number of items per page
+    var numberOfItems = $("#numberOfItems").val();
+    var limitPerPage = 10
+    var currentPage = 1
+    
+    // Get limit from URL
+    if (searchParams.has("limit")) {
+      limitPerPage = parseInt(searchParams.get("limit"))
+    }
+    
+    // Get page from URL
+    if (searchParams.has("page")) {
+      currentPage = parseInt(searchParams.get("page"))
+    }
+
+    // Total pages rounded upwards
+    var totalPages = Math.ceil(numberOfItems / limitPerPage);
+    // Number of buttons at the top, not counting prev/next,
+    // but including the dotted buttons.
+    // Must be at least 5:
+    var paginationSize = 7; 
+
+    function showPage(whichPage) {
+        if (whichPage < 1 || whichPage > totalPages) return false;
+        currentPage = whichPage;
+        // Replace the navigation items (not prev/next):            
+        $(".pagination li").slice(1, -1).remove();
+        getPageList(totalPages, currentPage, paginationSize).forEach( item => {
+            $("<li>").addClass("page-item")
+                     .addClass(item ? "current-page" : "disabled")
+                     .toggleClass("active", item === currentPage).append(
+                $("<a>").addClass("page-link").attr({
+                    href: "javascript:void(0)"}).text(item || "...")
+            ).insertBefore("#next-page");
+        });
+        // Disable prev/next when at first/last page:
+        $("#previous-page").toggleClass("disabled", currentPage === 1);
+        $("#next-page").toggleClass("disabled", currentPage === totalPages);
+        return true;
+    }
+
+    // Show the page links
+    showPage(currentPage);
+
+    // Use event delegation, as these items are recreated later    
+    $(document).on("click", ".pagination li.current-page:not(.active)", function () {
+        // Add one to page on URL path
+        searchParams.set("page", parseInt($(this).text()))
+        window.location.search = searchParams.toString()
+    });
+    $("#next-page").on("click", function () {
+      // Add one to page on URL path
+      searchParams.set("page", currentPage + 1)
+      window.location.search = searchParams.toString()
+    });
+
+    $("#previous-page").on("click", function () {
+      // Add one to page on URL path
+      searchParams.set("page", currentPage - 1)
+      window.location.search = searchParams.toString()
+    });
+});
+</script>
+{{end}}

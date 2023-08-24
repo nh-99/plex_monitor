@@ -9,10 +9,13 @@ import (
 	"plex_monitor/internal/web/api/controllers/firehose"
 	"plex_monitor/internal/web/api/controllers/user"
 	"plex_monitor/internal/web/api/controllers/webhook"
+	"plex_monitor/internal/web/interface/dashboard"
+	interface_user "plex_monitor/internal/web/interface/user"
 
 	logger "github.com/chi-middleware/logrus-logger"
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
+	"github.com/go-chi/cors"
 	"github.com/go-chi/render"
 	"github.com/sirupsen/logrus"
 )
@@ -22,6 +25,16 @@ var log logrus.FieldLogger
 func routes() *chi.Mux {
 	router := chi.NewRouter()
 	router.Use(
+		cors.Handler(cors.Options{
+			// AllowedOrigins:   []string{"https://foo.com"}, // Use this to allow specific origin hosts
+			AllowedOrigins: []string{"https://*", "http://*"},
+			// AllowOriginFunc:  func(r *http.Request, origin string) bool { return true },
+			AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+			AllowedHeaders:   []string{"Accept", "Authorization", "Content-Type", "X-CSRF-Token"},
+			ExposedHeaders:   []string{"Link"},
+			AllowCredentials: false,
+			MaxAge:           300, // Maximum value not ignored by any of major browsers
+		}),
 		logger.Logger("router", log),                  // Log API request calls
 		middleware.Compress(flate.DefaultCompression), // Compress results, mostly gzipping assets and json
 		middleware.RedirectSlashes,                    // Redirect slashes to no slash URL versions
@@ -41,6 +54,11 @@ func routes() *chi.Mux {
 		r.Get("/heartbeat", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			w.Write([]byte("OK"))
 		}))
+	})
+
+	router.Route("/", func(r chi.Router) {
+		r.Mount("/user", interface_user.Routes())
+		r.Mount("/dashboard", dashboard.Routes())
 	})
 
 	return router

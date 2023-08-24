@@ -38,7 +38,7 @@ func (u User) IsAnonymous() bool {
 
 // GetAnonymousUser returns the anonymous user.
 func GetAnonymousUser() User {
-	return User{ID: AnonymousUserID}
+	return User{ID: AnonymousUserID, Email: "anon"}
 }
 
 // GetUser returns the user with the supplied ID or email.

@@ -1,0 +1,43 @@
+{{define "title"}}Login{{end}}
+{{define "scripts"}}{{end}}
+{{define "body"}}
+<div class="page page-center">
+  <div class="container container-tight py-4">
+    <div class="text-center mb-4">
+      <a href="." class="navbar-brand navbar-brand-autodark">
+        <h1>Plex Monitor</h1>
+      </a>
+    </div>
+    {{ if .HasError }}
+      <div class="alert alert-danger" role="alert">
+        {{ .Error }}
+      </div>
+    {{ end }}
+    <div class="card card-md">
+      <div class="card-body">
+        <h2 class="h2 text-center mb-4">Login to your account</h2>
+        <form method="post" autocomplete="off" novalidate>
+          <div class="mb-3">
+            <label class="form-label">Email address</label>
+            <input name="email" type="email" class="form-control" placeholder="your@email.com" autocomplete="off">
+          </div>
+          <div class="mb-2">
+            <div class="input-group input-group-flat">
+              <input name="password" type="password" class="form-control"  placeholder="Your password"  autocomplete="off">
+            </div>
+          </div>
+          <div class="form-footer">
+            <button type="submit" class="btn btn-primary w-100">Sign in</button>
+          </div>
+        </form>
+      </div>
+      <div class="hr"></div>
+      <div class="card-body">
+        <div class="row">
+          <p class="text-secondary">{{.InspirationalQuote}}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{{end}}
