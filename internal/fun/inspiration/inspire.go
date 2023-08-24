@@ -49,7 +49,7 @@ func parseJSON(byteValue []byte) Quotes {
 	return quotes
 }
 
-func getRandomQuoteAndPrint(quotes Quotes) (ret string) {
+func getRandomQuote(quotes Quotes) (ret string) {
 	// randomly picking a quote
 
 	// randomly generating seed very fast, which the rand funtion uses
@@ -75,5 +75,5 @@ func getRandomQuoteAndPrint(quotes Quotes) (ret string) {
 func GetInspirationalQuote() string {
 	var byteValue = openJSONFile("./data/inspirational_quotes.json")
 	var quotes = parseJSON(byteValue)
-	return getRandomQuoteAndPrint(quotes)
+	return getRandomQuote(quotes)
 }
