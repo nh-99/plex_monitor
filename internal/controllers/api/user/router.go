@@ -2,7 +2,7 @@ package user
 
 import (
 	"os"
-	"plex_monitor/internal/web/middleware"
+	"plex_monitor/internal/controllers/middleware"
 
 	"github.com/go-chi/chi"
 	"github.com/go-chi/jwtauth"
@@ -24,18 +24,15 @@ func Routes() *chi.Mux {
 		// and tweak it, its not scary.
 		r.Use(jwtauth.Authenticator)
 
-		// Custom middleware for plex_monitor to add user to request context, for easy access
+		// Custom middleware for X to add user to request context, for easy access
 		r.Use(middleware.CreateUserContext)
-
-		// TODO: add routes here
 	})
 
 	// Public endpoints
 	router.Group(func(r chi.Router) {
-		// Custom middleware for plex_monitor to add user to request context, for easy access
+		// Custom middleware for X to add user to request context, for easy access
 		r.Use(middleware.CreateUserContext)
 
-		r.Get("/login", ViewLogin)
 		r.Post("/login", PerformLogin)
 	})
 

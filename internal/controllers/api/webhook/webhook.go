@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"net/http"
 	"net/http/httputil"
+	"plex_monitor/internal/controllers/api"
 	"plex_monitor/internal/database/models"
-	"plex_monitor/internal/web/api"
 	"time"
 
 	"github.com/go-chi/render"

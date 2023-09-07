@@ -3,9 +3,9 @@ package dashboard
 import (
 	"html/template"
 	"net/http"
+	web "plex_monitor/internal/controllers/interface"
+	"plex_monitor/internal/controllers/middleware"
 	"plex_monitor/internal/database/models"
-	web "plex_monitor/internal/web/interface"
-	"plex_monitor/internal/web/middleware"
 	"strconv"
 
 	"github.com/sirupsen/logrus"
@@ -18,7 +18,7 @@ type viewData struct {
 // ViewDashboard will render a UI that displays a summary of the system.
 func ViewDashboard(w http.ResponseWriter, r *http.Request) {
 	logrus.Info("ViewDashboard route called")
-	parsedTemplate, err := template.ParseFiles("./web/html/base.html", "./web/html/_partials/navbar.html", "./web/html/dashboard/view.html")
+	parsedTemplate, err := template.ParseFiles("./web/html/base.html", "./web/html/_partials/navbar.html", "web/html/_partials/footer.html", "./web/html/dashboard/view.html")
 	if err != nil {
 		logrus.WithFields(
 			logrus.Fields{

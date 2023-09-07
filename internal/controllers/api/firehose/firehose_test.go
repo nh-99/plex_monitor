@@ -1,4 +1,4 @@
-package firehose
+package firehose_test
 
 import (
 	"bytes"
@@ -6,8 +6,9 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"os"
+	"plex_monitor/internal/controllers/api/firehose"
+	"plex_monitor/internal/controllers/api/webhook"
 	"plex_monitor/internal/database"
-	"plex_monitor/internal/web/api/controllers/webhook"
 	"strings"
 	"testing"
 
@@ -77,7 +78,7 @@ func TestFirehose(t *testing.T) {
 	}
 
 	// We create a ResponseRecorder (which satisfies http.ResponseWriter) to record the response.
-	handler = http.HandlerFunc(Firehose)
+	handler = http.HandlerFunc(firehose.Firehose)
 
 	// Our handlers satisfy http.Handler, so we can call their ServeHTTP method directly and pass in our Request and ResponseRecorder.
 	handler.ServeHTTP(rr, req)
@@ -121,7 +122,7 @@ func TestFirehose(t *testing.T) {
 	}
 
 	// We create a ResponseRecorder (which satisfies http.ResponseWriter) to record the response.
-	handler = http.HandlerFunc(Firehose)
+	handler = http.HandlerFunc(firehose.Firehose)
 
 	// Our handlers satisfy http.Handler, so we can call their ServeHTTP method directly and pass in our Request and ResponseRecorder.
 	handler.ServeHTTP(rr, req)

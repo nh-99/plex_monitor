@@ -4,10 +4,10 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+	web "plex_monitor/internal/controllers/interface"
+	"plex_monitor/internal/controllers/middleware"
 	"plex_monitor/internal/database/models"
 	"plex_monitor/internal/fun/inspiration"
-	web "plex_monitor/internal/web/interface"
-	"plex_monitor/internal/web/middleware"
 	"text/template"
 	"time"
 

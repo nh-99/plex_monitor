@@ -1,5 +1,5 @@
 # List of command names (directories)
-COMMANDS := web cli
+COMMANDS := http cli
 
 # Build all commands
 build: $(COMMANDS)
@@ -12,7 +12,7 @@ test:
 # Build a specific command
 $(COMMANDS):
 	@echo "Building $@..."
-	@go build -o bin/pm-$@ ./cmd/$@/main.go
+	@go build --ldflags="-X 'plex_monitor/internal/buildflags.Version=$(shell git rev-parse --short HEAD)'" -o bin/pm-$@ ./cmd/$@/main.go
 
 # Clean all built commands
 clean:
@@ -22,7 +22,7 @@ clean:
 # Run a specific command
 run-%: build
 	@echo "Running $*..."
-	@./bin/$*
+	@./bin/pm-$*
 
 # Build the Docker container
 build-docker:

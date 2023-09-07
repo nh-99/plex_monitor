@@ -2,7 +2,7 @@ package dashboard
 
 import (
 	"os"
-	"plex_monitor/internal/web/middleware"
+	"plex_monitor/internal/controllers/middleware"
 
 	"github.com/go-chi/chi"
 	"github.com/go-chi/jwtauth"

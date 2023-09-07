@@ -5,12 +5,12 @@ import (
 	"net/http"
 	"os"
 
+	"plex_monitor/internal/controllers/api/firehose"
+	"plex_monitor/internal/controllers/api/user"
+	"plex_monitor/internal/controllers/api/webhook"
+	"plex_monitor/internal/controllers/interface/dashboard"
+	user_interface "plex_monitor/internal/controllers/interface/user"
 	"plex_monitor/internal/database"
-	"plex_monitor/internal/web/api/controllers/firehose"
-	"plex_monitor/internal/web/api/controllers/user"
-	"plex_monitor/internal/web/api/controllers/webhook"
-	"plex_monitor/internal/web/interface/dashboard"
-	interface_user "plex_monitor/internal/web/interface/user"
 
 	logger "github.com/chi-middleware/logrus-logger"
 	"github.com/go-chi/chi"
@@ -57,7 +57,7 @@ func routes() *chi.Mux {
 	})
 
 	router.Route("/", func(r chi.Router) {
-		r.Mount("/user", interface_user.Routes())
+		r.Mount("/user", user_interface.Routes())
 		r.Mount("/dashboard", dashboard.Routes())
 	})
 
