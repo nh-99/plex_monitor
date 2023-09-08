@@ -6,111 +6,138 @@ import (
 	"time"
 )
 
+// PlexMetadata is the struct that represents the metadata of a Plex item
+type PlexMetadata struct {
+	LibrarySectionType    string  `json:"librarySectionType" bson:"librarySectionType"`
+	RatingKey             string  `json:"ratingKey" bson:"ratingKey"`
+	Key                   string  `json:"key" bson:"key"`
+	MetaGUID              string  `json:"guid" bson:"guid"`
+	Studio                string  `json:"studio" bson:"studio"`
+	Type                  string  `json:"type" bson:"type"`
+	Title                 string  `json:"title" bson:"title"`
+	LibrarySectionTitle   string  `json:"librarySectionTitle" bson:"librarySectionTitle"`
+	LibrarySectionID      int     `json:"librarySectionID" bson:"librarySectionID"`
+	LibrarySectionKey     string  `json:"librarySectionKey" bson:"librarySectionKey"`
+	ContentRating         string  `json:"contentRating" bson:"contentRating"`
+	Summary               string  `json:"summary" bson:"summary"`
+	NumericRating         float64 `json:"rating" bson:"rating"`
+	AudienceRating        float64 `json:"audienceRating" bson:"audienceRating"`
+	ViewOffset            int     `json:"viewOffset" bson:"viewOffset"`
+	LastViewedAt          int     `json:"lastViewedAt" bson:"lastViewedAt"`
+	Year                  int     `json:"year" bson:"year"`
+	Tagline               string  `json:"tagline" bson:"tagline"`
+	Thumb                 string  `json:"thumb" bson:"thumb"`
+	Art                   string  `json:"art" bson:"art"`
+	Duration              int     `json:"duration" bson:"duration"`
+	OriginallyAvailableAt string  `json:"originallyAvailableAt" bson:"originallyAvailableAt"`
+	AddedAt               int     `json:"addedAt" bson:"addedAt"`
+	UpdatedAt             int     `json:"updatedAt" bson:"updatedAt"`
+	AudienceRatingImage   string  `json:"audienceRatingImage" bson:"audienceRatingImage"`
+	PrimaryExtraKey       string  `json:"primaryExtraKey" bson:"primaryExtraKey"`
+	RatingImage           string  `json:"ratingImage" bson:"ratingImage"`
+	Genre                 []struct {
+		ID     int    `json:"id" bson:"id"`
+		Filter string `json:"filter" bson:"filter"`
+		Tag    string `json:"tag" bson:"tag"`
+		Count  int    `json:"count" bson:"count"`
+	} `json:"Genre" bson:"Genre"`
+	Country []struct {
+		ID     int    `json:"id" bson:"id"`
+		Filter string `json:"filter" bson:"filter"`
+		Tag    string `json:"tag" bson:"tag"`
+		Count  int    `json:"count" bson:"count"`
+	} `json:"Country" bson:"Country"`
+	GUID []struct {
+		ID string `json:"id" bson:"id"`
+	} `json:"Guid" bson:"Guid"`
+	Rating []struct {
+		Image string  `json:"image" bson:"image"`
+		Value float64 `json:"value" bson:"value"`
+		Type  string  `json:"type" bson:"type"`
+		Count int     `json:"count" bson:"count"`
+	} `json:"Rating" bson:"Rating"`
+	Director []struct {
+		ID     int    `json:"id" bson:"id"`
+		Filter string `json:"filter" bson:"filter"`
+		Tag    string `json:"tag" bson:"tag"`
+		TagKey string `json:"tagKey" bson:"tagKey"`
+		Count  int    `json:"count" bson:"count"`
+		Thumb  string `json:"thumb" bson:"thumb"`
+	} `json:"Director" bson:"Director"`
+	Writer []struct {
+		ID     int    `json:"id" bson:"id"`
+		Filter string `json:"filter" bson:"filter"`
+		Tag    string `json:"tag" bson:"tag"`
+		TagKey string `json:"tagKey" bson:"tagKey"`
+		Count  int    `json:"count" bson:"count"`
+		Thumb  string `json:"thumb" bson:"thumb"`
+	} `json:"Writer" bson:"Writer"`
+	Role []struct {
+		ID     int    `json:"id" bson:"id"`
+		Filter string `json:"filter" bson:"filter"`
+		Tag    string `json:"tag" bson:"tag"`
+		TagKey string `json:"tagKey" bson:"tagKey"`
+		Count  int    `json:"count" bson:"count"`
+		Role   string `json:"role" bson:"role"`
+		Thumb  string `json:"thumb" bson:"thumb"`
+	} `json:"Role" bson:"Role"`
+	Producer []struct {
+		ID     int    `json:"id" bson:"id"`
+		Filter string `json:"filter" bson:"filter"`
+		Tag    string `json:"tag" bson:"tag"`
+		TagKey string `json:"tagKey" bson:"tagKey"`
+		Count  int    `json:"count" bson:"count"`
+		Thumb  string `json:"thumb" bson:"thumb"`
+	} `json:"Producer" bson:"Producer"`
+}
+
+// PlexPlayer is the struct that represents the player that played the Plex item
+type PlexPlayer struct {
+	Local         bool   `json:"local" bson:"local"`
+	PublicAddress string `json:"publicAddress" bson:"publicAddress"`
+	Title         string `json:"title" bson:"title"`
+	UUID          string `json:"uuid" bson:"uuid"`
+}
+
+// PlexAccount is the struct that represents the Plex account that played the Plex item
+type PlexAccount struct {
+	ID    int    `json:"id" bson:"id"`
+	Thumb string `json:"thumb" bson:"thumb"`
+	Title string `json:"title" bson:"title"`
+}
+
 // PlexWebhookData is the struct that represents the data sent by Plex webhooks
 type PlexWebhookData struct {
-	Event   string `json:"event" bson:"event"`
-	User    bool   `json:"user" bson:"user"`
-	Owner   bool   `json:"owner" bson:"owner"`
-	Account struct {
-		ID    int    `json:"id" bson:"id"`
-		Thumb string `json:"thumb" bson:"thumb"`
-		Title string `json:"title" bson:"title"`
-	} `json:"Account" bson:"Account"`
-	Server struct {
+	Event   string      `json:"event" bson:"event"`
+	User    bool        `json:"user" bson:"user"`
+	Owner   bool        `json:"owner" bson:"owner"`
+	Account PlexAccount `json:"Account" bson:"Account"`
+	Server  struct {
 		Title string `json:"title" bson:"title"`
 		UUID  string `json:"uuid" bson:"uuid"`
 	} `json:"Server" bson:"Server"`
-	Player struct {
-		Local         bool   `json:"local" bson:"local"`
-		PublicAddress string `json:"publicAddress" bson:"publicAddress"`
-		Title         string `json:"title" bson:"title"`
-		UUID          string `json:"uuid" bson:"uuid"`
-	} `json:"Player" bson:"Player"`
-	Metadata struct {
-		LibrarySectionType    string  `json:"librarySectionType" bson:"librarySectionType"`
-		RatingKey             string  `json:"ratingKey" bson:"ratingKey"`
-		Key                   string  `json:"key" bson:"key"`
-		MetaGUID              string  `json:"guid" bson:"guid"`
-		Studio                string  `json:"studio" bson:"studio"`
-		Type                  string  `json:"type" bson:"type"`
-		Title                 string  `json:"title" bson:"title"`
-		LibrarySectionTitle   string  `json:"librarySectionTitle" bson:"librarySectionTitle"`
-		LibrarySectionID      int     `json:"librarySectionID" bson:"librarySectionID"`
-		LibrarySectionKey     string  `json:"librarySectionKey" bson:"librarySectionKey"`
-		ContentRating         string  `json:"contentRating" bson:"contentRating"`
-		Summary               string  `json:"summary" bson:"summary"`
-		NumericRating         float64 `json:"rating" bson:"rating"`
-		AudienceRating        float64 `json:"audienceRating" bson:"audienceRating"`
-		ViewOffset            int     `json:"viewOffset" bson:"viewOffset"`
-		LastViewedAt          int     `json:"lastViewedAt" bson:"lastViewedAt"`
-		Year                  int     `json:"year" bson:"year"`
-		Tagline               string  `json:"tagline" bson:"tagline"`
-		Thumb                 string  `json:"thumb" bson:"thumb"`
-		Art                   string  `json:"art" bson:"art"`
-		Duration              int     `json:"duration" bson:"duration"`
-		OriginallyAvailableAt string  `json:"originallyAvailableAt" bson:"originallyAvailableAt"`
-		AddedAt               int     `json:"addedAt" bson:"addedAt"`
-		UpdatedAt             int     `json:"updatedAt" bson:"updatedAt"`
-		AudienceRatingImage   string  `json:"audienceRatingImage" bson:"audienceRatingImage"`
-		PrimaryExtraKey       string  `json:"primaryExtraKey" bson:"primaryExtraKey"`
-		RatingImage           string  `json:"ratingImage" bson:"ratingImage"`
-		Genre                 []struct {
-			ID     int    `json:"id" bson:"id"`
-			Filter string `json:"filter" bson:"filter"`
-			Tag    string `json:"tag" bson:"tag"`
-			Count  int    `json:"count" bson:"count"`
-		} `json:"Genre" bson:"Genre"`
-		Country []struct {
-			ID     int    `json:"id" bson:"id"`
-			Filter string `json:"filter" bson:"filter"`
-			Tag    string `json:"tag" bson:"tag"`
-			Count  int    `json:"count" bson:"count"`
-		} `json:"Country" bson:"Country"`
-		GUID []struct {
-			ID string `json:"id" bson:"id"`
-		} `json:"Guid" bson:"Guid"`
-		Rating []struct {
-			Image string  `json:"image" bson:"image"`
-			Value float64 `json:"value" bson:"value"`
-			Type  string  `json:"type" bson:"type"`
-			Count int     `json:"count" bson:"count"`
-		} `json:"Rating" bson:"Rating"`
-		Director []struct {
-			ID     int    `json:"id" bson:"id"`
-			Filter string `json:"filter" bson:"filter"`
-			Tag    string `json:"tag" bson:"tag"`
-			TagKey string `json:"tagKey" bson:"tagKey"`
-			Count  int    `json:"count" bson:"count"`
-			Thumb  string `json:"thumb" bson:"thumb"`
-		} `json:"Director" bson:"Director"`
-		Writer []struct {
-			ID     int    `json:"id" bson:"id"`
-			Filter string `json:"filter" bson:"filter"`
-			Tag    string `json:"tag" bson:"tag"`
-			TagKey string `json:"tagKey" bson:"tagKey"`
-			Count  int    `json:"count" bson:"count"`
-			Thumb  string `json:"thumb" bson:"thumb"`
-		} `json:"Writer" bson:"Writer"`
-		Role []struct {
-			ID     int    `json:"id" bson:"id"`
-			Filter string `json:"filter" bson:"filter"`
-			Tag    string `json:"tag" bson:"tag"`
-			TagKey string `json:"tagKey" bson:"tagKey"`
-			Count  int    `json:"count" bson:"count"`
-			Role   string `json:"role" bson:"role"`
-			Thumb  string `json:"thumb" bson:"thumb"`
-		} `json:"Role" bson:"Role"`
-		Producer []struct {
-			ID     int    `json:"id" bson:"id"`
-			Filter string `json:"filter" bson:"filter"`
-			Tag    string `json:"tag" bson:"tag"`
-			TagKey string `json:"tagKey" bson:"tagKey"`
-			Count  int    `json:"count" bson:"count"`
-			Thumb  string `json:"thumb" bson:"thumb"`
-		} `json:"Producer" bson:"Producer"`
-	} `json:"Metadata" bson:"Metadata"`
-	ServiceName string    `json:"serviceName" bson:"serviceName"`
-	CreatedAt   time.Time `json:"createdAt" bson:"createdAt"`
+	Player      PlexPlayer   `json:"Player" bson:"Player"`
+	Metadata    PlexMetadata `json:"Metadata" bson:"Metadata"`
+	ServiceName string       `json:"serviceName" bson:"serviceName"`
+	CreatedAt   time.Time    `json:"createdAt" bson:"createdAt"`
+}
+
+// ToJSON converts the PlexMetadata struct to a JSON string
+func (p *PlexMetadata) ToJSON() (string, error) {
+	jsonBytes, err := json.Marshal(p)
+	if err != nil {
+		return "", err
+	}
+	return string(jsonBytes), nil
+}
+
+// ToJSON converts the PlexPlayer struct to a JSON string
+func (p *PlexPlayer) ToJSON() (string, error) {
+	jsonBytes, err := json.Marshal(p)
+	if err != nil {
+		return "", err
+	}
+	return string(jsonBytes), nil
 }
 
 // ToJSON converts the PlexWebhookData struct to a JSON string

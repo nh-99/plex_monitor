@@ -7,6 +7,7 @@ import (
 	"plex_monitor/internal/controllers/middleware"
 	"plex_monitor/internal/database/models"
 	"strconv"
+	"time"
 
 	"github.com/sirupsen/logrus"
 )
@@ -50,6 +51,12 @@ type activityData struct {
 // ViewActivity will render a UI that displays recent events.
 func ViewActivity(w http.ResponseWriter, r *http.Request) {
 	logrus.Info("ViewActivity route called")
+
+	// Set timezone
+	loc, err := time.LoadLocation("America/New_York")
+	// handle err
+	time.Local = loc // -> this is setting the global timezone
+
 	parsedTemplate, err := template.ParseFiles("./web/html/base.html", "./web/html/_partials/navbar.html", "web/html/_partials/footer.html", "./web/html/dashboard/activity.html")
 	if err != nil {
 		logrus.WithFields(

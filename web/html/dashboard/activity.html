@@ -46,7 +46,7 @@
                     <div>
                       <div class="row">
                         <div class="col-auto">
-                          <span class="avatar">{{ .ServiceName }}</span>
+                          <a class="avatar" data-bs-toggle="modal" data-bs-target="#modal-data-{{ .ID }}">{{ .ServiceName }}</a>
                         </div>
                         <div class="col">
                           <div class="text-truncate">
@@ -70,6 +70,57 @@
                         <!-- <div class="col-auto align-self-center">
                           <div class="badge bg-primary"></div>
                         </div> -->
+                      </div>
+                    </div>
+                    <!-- Modal -->
+                    <div class="modal modal-blur fade" id="modal-data-{{ .ID }}" tabindex="-1" role="dialog" aria-hidden="true">
+                      <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" role="document">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h5 class="modal-title">{{ .Summary }}</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                          </div>
+                          <div class="modal-body">
+                            <div class="datagrid">
+                              <div class="datagrid-item">
+                                <div class="datagrid-title">Library</div>
+                                <div class="datagrid-content">{{ .Metadata.LibrarySectionTitle }}</div>
+                              </div>
+                              <div class="datagrid-item">
+                                <div class="datagrid-title">Media Title</div>
+                                <div class="datagrid-content">{{ .Metadata.Title }}</div>
+                              </div>
+                              <div class="datagrid-item">
+                                <div class="datagrid-title">Media Summary</div>
+                                <div class="datagrid-content">{{ .Metadata.Summary }}</div>
+                              </div>
+                              <div class="datagrid-item">
+                                <div class="datagrid-title">Account</div>
+                                <div class="datagrid-content">
+                                  <div class="d-flex align-items-center">
+                                    <span class="avatar avatar-xs me-2 rounded" style="background-image: url({{ .Account.Thumb }})"></span>
+                                    {{ .Account.Title }}
+                                  </div>
+                                </div>
+                              </div>
+                              <div class="datagrid-item">
+                                <div class="datagrid-title">Device Name</div>
+                                <div class="datagrid-content">{{ .Player.Title }}</div>
+                              </div>
+                              <div class="datagrid-item">
+                                <div class="datagrid-title">IP Address</div>
+                                <div class="datagrid-content"><a href="https://whatismyipaddress.com/ip/{{ .Player.PublicAddress }}" target="_blank">{{ .Player.PublicAddress }}</a></div>
+                              </div>
+                              <div class="datagrid-item">
+                                <div class="datagrid-title">Occured At</div>
+                                <div class="datagrid-content">{{ .CreatedAt.Local.Format "Jan 02, 2006 03:04:05 PM" }}</div>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="modal-footer">
+                            <button type="button" class="btn me-auto" data-bs-dismiss="modal">Close</button>
+                          </div>
+                        </div>
                       </div>
                     </div>
                   {{ end }}

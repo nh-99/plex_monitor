@@ -9,11 +9,14 @@ import (
 
 // ActivityStream is the data structure for the activity stream.
 type ActivityStream struct {
-	ID               string    `bson:"_id"`
-	CreatedAt        time.Time `bson:"createdAt"`
-	FormattedTimeAgo string    `bson:"formattedTimeAgo"`
-	ServiceName      string    `bson:"serviceName"`
-	Summary          string    `bson:"summary"`
+	ID               string       `bson:"_id"`
+	CreatedAt        time.Time    `bson:"createdAt"`
+	FormattedTimeAgo string       `bson:"formattedTimeAgo"`
+	ServiceName      string       `bson:"serviceName"`
+	Summary          string       `bson:"summary"`
+	Player           PlexPlayer   `bson:"Player"`
+	Metadata         PlexMetadata `bson:"Metadata"`
+	Account          PlexAccount  `bson:"Account"`
 }
 
 // GetWebhookDataActivityCount returns the number of webhook data "activity" entries.
@@ -103,6 +106,9 @@ func GetWebhookDataAsActivityStream(offset int64, limit int64) ([]ActivityStream
 				"formattedTimeAgo": 1,
 				"serviceName":      1,
 				"summary":          1,
+				"Player":           1,
+				"Metadata":         1,
+				"Account":          1,
 			},
 		},
 	}
