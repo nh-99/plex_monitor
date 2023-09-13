@@ -170,7 +170,9 @@ func (p *Pipeline) MarkStepAsSkipped(key string) error {
 		return err
 	}
 
+	// Set the step as skipped, then save the step in the pipeline
 	step.Status = StatusSkipped
+	p.Steps[idx] = *step
 
 	// Set the current step
 	p.CurrentStep = idx
