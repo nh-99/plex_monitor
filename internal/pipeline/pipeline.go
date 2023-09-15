@@ -26,6 +26,9 @@ const (
 	// StatusPending is the status for a pending step.
 	StatusPending = "pending"
 
+	// StatusExecuting is the status for an executing step.
+	StatusExecuting = "executing"
+
 	// StatusUnknown is the status for an unknown step.
 	StatusUnknown = "unknown"
 )
@@ -63,7 +66,7 @@ type Step struct {
 	CompletedAt *time.Time `bson:"completed_at" json:"completed_at"`
 
 	// StartedAt is the time that the step was started.
-	StartedAt time.Time `bson:"started_at" json:"started_at"`
+	StartedAt *time.Time `bson:"started_at" json:"started_at"`
 
 	// Function is the function that is executed for the step.
 	Function func() error `bson:"-" json:"-"`
@@ -102,11 +105,10 @@ func NewPipeline(name string, logger *logrus.Entry) *Pipeline {
 // AddStep adds a step to the pipeline.
 func (p *Pipeline) AddStep(name, key string, function func() error) {
 	p.Steps = append(p.Steps, Step{
-		Name:      name,
-		Key:       key,
-		Status:    StatusPending,
-		Function:  function,
-		StartedAt: time.Now(),
+		Name:     name,
+		Key:      key,
+		Status:   StatusPending,
+		Function: function,
 	})
 }
 
@@ -139,15 +141,23 @@ func (p *Pipeline) RunStep(key string) error {
 	// Set the current step
 	p.CurrentStep = idx
 
+	// Set the step as started, and set the started time, then save the step in the pipeline
+	startedTime := time.Now()
+	step.Status = StatusExecuting
+	step.StartedAt = &startedTime
+
 	// Run the step
 	err = step.Function()
+	completedTime := time.Now()
+
 	if err != nil {
+		// Set the step as failed, and set the completed time, then save the step in the pipeline
 		step.Status = StatusFailed
+		step.CompletedAt = &completedTime
 		return err
 	}
 
 	// Set the step as completed, and set the completed time, then save the step in the pipeline
-	completedTime := time.Now()
 	step.Status = StatusSuccess
 	step.CompletedAt = &completedTime
 	p.Steps[idx] = *step
@@ -186,12 +196,30 @@ func (p *Pipeline) MarkStepAsSkipped(key string) error {
 	return nil
 }
 
+// MarkAllPendingStepsAsSkipped marks all pending steps as skipped.
+func (p *Pipeline) MarkAllPendingStepsAsSkipped() error {
+	for idx, step := range p.Steps {
+		if step.Status == StatusPending {
+			step.Status = StatusSkipped
+			p.Steps[idx] = step
+		}
+	}
+
+	// Save the pipeline to the database
+	return p.Save()
+}
+
 // AddMetadata adds metadata to the pipeline.
 func (p *Pipeline) AddMetadata(key string, value interface{}) {
 	if p.Metadata == nil {
 		p.Metadata = make(map[string]interface{})
 	}
 	p.Metadata[key] = value
+}
+
+// GetMetadata returns the metadata by key for the pipeline.
+func (p *Pipeline) GetMetadata(key string) interface{} {
+	return p.Metadata[key]
 }
 
 // Save saves the pipeline to the database.

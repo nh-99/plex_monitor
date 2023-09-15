@@ -187,16 +187,17 @@ func (p *MediaRequestPipeline) Requested() error {
 		"discord": []map[string]interface{}{
 			{
 				"id": discordID,
-				"ombi": map[string]interface{}{
-					"id":           user.ID,
-					"username":     user.UserName,
-					"alias":        user.Alias,
-					"emailAddress": user.EmailAddress,
-				},
 			},
 		},
 	}
 	p.AddMetadata(ackKey, discordMetadata)
+
+	// Add additional Ombi metadata to the pipeline.
+	ombiMetadata := p.GetMetadata("ombi").(map[string]interface{})
+	ombiMetadata["userID"] = user.ID
+	ombiMetadata["alias"] = user.Alias
+	ombiMetadata["emailAddress"] = user.EmailAddress
+	p.AddMetadata("ombi", ombiMetadata)
 
 	return nil
 }

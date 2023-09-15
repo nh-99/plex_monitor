@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"plex_monitor/internal/database"
 	"plex_monitor/internal/database/models"
+	"plex_monitor/internal/pipeline"
 	"strings"
 
 	"github.com/sirupsen/logrus"
@@ -67,6 +68,46 @@ func (rms SonarrMonitoringService) fire(l *logrus.Entry, w http.ResponseWriter, 
 	_, err = database.DB.Collection(database.WebhookCollectionName).InsertOne(database.Ctx, sonarrWebhookData)
 	if err != nil {
 		return fmt.Errorf("unable to write to database: %s", err)
+	}
+
+	// Run the pipelines
+	err = runSonarrPipelines(sonarrWebhookData, l)
+	if err != nil {
+		return fmt.Errorf("unable to run pipelines: %w", err)
+	}
+
+	return nil
+}
+
+func runSonarrPipelines(sonarrWebhookData models.SonarrWebhookData, l *logrus.Entry) error {
+	// Run the pipeline step for Radarr
+	pipelineID := pipeline.GeneratePipelineID("TV", sonarrWebhookData.Series.Title)
+	pipelineData, err := pipeline.GetOrCreateMediaRequestPipeline(pipelineID)
+	if err != nil {
+		return fmt.Errorf("unable to get pipeline: %w", err)
+	}
+
+	switch sonarrWebhookData.EventType {
+	case RadarrMovieDownloadEventType:
+		go func() {
+			pipelineStep := pipeline.MediaRequestImported
+			err = pipelineData.RunStep(pipelineStep)
+			if err != nil {
+				l.WithField("err", err).Errorf("unable to run pipeline step: %v", err)
+			}
+		}()
+	case RadarrMovieAddedEventType:
+		go func() {
+			pipelineStep := pipeline.MediaRequestIngestedBySonarr
+			err := pipelineData.MarkStepAsSkipped(pipeline.MediaRequestIngestedByRadarr)
+			if err != nil {
+				l.WithField("err", err).Errorf("unable to mark step as skipped: %v", err)
+			}
+			err = pipelineData.RunStep(pipelineStep)
+			if err != nil {
+				l.WithField("err", err).Errorf("unable to run pipeline step: %v", err)
+			}
+		}()
 	}
 
 	return nil
