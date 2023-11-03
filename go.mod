@@ -17,6 +17,8 @@ require (
 	github.com/go-chi/chi/v5 v5.0.10 // indirect
 	github.com/go-chi/cors v1.2.1 // indirect
 	github.com/golang/snappy v0.0.4 // indirect
+	github.com/gorilla/websocket v1.4.2 // indirect
+	github.com/jmespath/go-jmespath v0.4.0 // indirect
 	github.com/klauspost/compress v1.16.7 // indirect
 	github.com/lestrrat-go/blackmagic v1.0.1 // indirect
 	github.com/montanaflynn/stats v0.7.1 // indirect
@@ -34,6 +36,8 @@ require (
 
 require (
 	github.com/ajg/form v1.5.1 // indirect
+	github.com/aws/aws-sdk-go v1.46.6
+	github.com/bwmarrin/discordgo v0.27.1
 	github.com/chi-middleware/logrus-logger v0.2.0
 	github.com/goccy/go-json v0.10.2 // indirect
 	github.com/lestrrat-go/backoff/v2 v2.0.8 // indirect

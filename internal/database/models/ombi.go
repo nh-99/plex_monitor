@@ -198,7 +198,7 @@ func RetrieveUsersFromOmbi(service ServiceData) ([]OmbiUser, error) {
 	}
 
 	// Create a new service rest driver for the media request service.
-	serviceRestDriver := servicerestdriver.NewOmbiRestDriver(service.ServiceName, service.Config["host"].(string),
+	serviceRestDriver := servicerestdriver.NewOmbiRestDriver(string(service.ServiceName), service.Config["host"].(string),
 		service.Config["key"].(string), l)
 
 	// Reach out to the media request service and get the user's Discord ID.
@@ -233,7 +233,7 @@ func RetrieveUsersFromOmbi(service ServiceData) ([]OmbiUser, error) {
 func RetrieveDiscordIDFromOmbi(service ServiceData, user OmbiUser) (string, error) {
 	l := logrus.WithField("function", "RetrieveDiscordIDFromOmbi")
 	// Create a new service rest driver for the media request service.
-	serviceRestDriver := servicerestdriver.NewOmbiRestDriver(service.ServiceName, service.Config["host"].(string),
+	serviceRestDriver := servicerestdriver.NewOmbiRestDriver(string(service.ServiceName), service.Config["host"].(string),
 		service.Config["key"].(string), l)
 
 	// Reach out to the media request service and get the user's Discord ID.
