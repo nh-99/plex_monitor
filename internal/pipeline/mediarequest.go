@@ -154,9 +154,8 @@ func (p *MediaRequestPipeline) Requested() error {
 		return errors.New("metadata does not have ombi key")
 	}
 
-	mediaRequestService := "ombi"
 	// Retrieve the service from the database that holds data on the media request.
-	service, err := models.GetServiceByName(mediaRequestService)
+	service, err := models.GetServiceByName(models.ServiceTypeOmbi)
 	if err != nil {
 		return err
 	}
