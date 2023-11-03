@@ -1,5 +1,5 @@
 # List of command names (directories)
-COMMANDS := http cli
+COMMANDS := http cli discord
 registryurl := localhost\:32000
 
 # Build all commands

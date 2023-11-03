@@ -33,7 +33,7 @@ func getServiceCreateCmd() *cli.Command {
 		},
 		Action: func(cCtx *cli.Context) error {
 			data := models.ServiceData{
-				ServiceName: cCtx.String("name"),
+				ServiceName: models.ServiceType(cCtx.String("name")),
 				Config: bson.M{
 					"key":  cCtx.String("key"),
 					"host": cCtx.String("host"),

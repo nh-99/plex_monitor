@@ -8,6 +8,6 @@ RUN go mod download && go mod verify
 
 COPY . .
 RUN make
-RUN cp bin/pm-web /usr/local/bin/app && cp bin/pm-cli /usr/local/bin/pm-cli
+RUN cp bin/pm-web /usr/local/bin/app && cp bin/pm-cli /usr/local/bin/pm-cli && cp bin/pm-discord /usr/local/bin/pm-discord
 
 CMD ["app"]
