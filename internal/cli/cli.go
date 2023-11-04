@@ -57,6 +57,21 @@ func GetCliApp() *cli.App {
 				},
 			},
 			{
+				Name:    "update",
+				Aliases: []string{"u"},
+				Usage:   "🫡 Updates an object in the system",
+				Subcommands: []*cli.Command{
+					{
+						Name:    "user",
+						Aliases: []string{"u"},
+						Usage:   "Updates a user in the system",
+						Subcommands: []*cli.Command{
+							getUserUpdatePermissionsCmd(),
+						},
+					},
+				},
+			},
+			{
 				Name:    "fetch",
 				Aliases: []string{"f"},
 				Usage:   "🫳 Fetches an object from the system",

@@ -48,18 +48,6 @@ type FrontendService struct {
 	Type   FrontendServiceType `bson:"type"`
 }
 
-// PermissionType is the type of the permission.
-type PermissionType string
-
-const (
-	// PermissionTypeCheckHealth is the type of the check health permission.
-	PermissionTypeCheckHealth PermissionType = "pm.check_health"
-	// PermissionTypeManageUsers is the type of the manage users permission.
-	PermissionTypeManageUsers PermissionType = "pm.manage_users"
-	// PermissionTypeScanLibrary is the type of the scan library permission.
-	PermissionTypeScanLibrary PermissionType = "pm.scan_library"
-)
-
 // IsSystem checks if the user is the system user.
 func (u User) IsSystem() bool {
 	return u.ID == SystemUserID
@@ -111,13 +99,12 @@ func (u User) CheckPassword(password string) bool {
 	return utils.CompareStringToHash(password, u.HashedPassword)
 }
 
-// CheckPermission checks if the user has the supplied permission.
-func (u User) CheckPermission(permission PermissionType) bool {
-	for _, p := range u.Permissions {
-		if p == permission {
-			return true
-		}
+// Save saves the user to the database.
+func (u User) Save() error {
+	_, err := database.DB.Collection("users").UpdateOne(database.Ctx, bson.M{"id": u.ID}, bson.M{"$set": u})
+	if err != nil {
+		return err
 	}
 
-	return false
+	return nil
 }
