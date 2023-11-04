@@ -144,3 +144,97 @@ func getUserUpdatePermissionsCmd() *cli.Command {
 		},
 	}
 }
+
+func getUserFrontendUpdateCmd() *cli.Command {
+	return &cli.Command{
+		Name:    "frontend",
+		Aliases: []string{"f"},
+		Usage:   "Update the frontend service for the supplied user",
+		Flags: []cli.Flag{
+			&cli.StringFlag{Name: "id"},
+			&cli.StringFlag{Name: "email"},
+			&cli.StringFlag{Name: "frontendType", Required: true},
+			&cli.StringFlag{Name: "frontendUserId"},
+			&cli.BoolFlag{Name: "remove"},
+		},
+		Action: func(cCtx *cli.Context) error {
+			email := cCtx.String("email")
+			id := cCtx.String("id")
+			frontendType := cCtx.String("frontendType")
+			frontendUserId := cCtx.String("frontendUserId")
+			remove := cCtx.Bool("remove")
+
+			if email == "" && id == "" {
+				fmt.Println("Must supply either a user ID or email")
+				return nil
+			}
+
+			if frontendType == "" {
+				fmt.Println("Must supply a frontend type")
+				return nil
+			}
+
+			// Lookup the user
+			user, err := models.GetUser(id, email)
+			if err != nil {
+				panic(err)
+			}
+
+			if remove {
+				// Find the frontend service in the user's frontend services
+				index := -1
+				for i, s := range user.FrontendServices {
+					if s.Type == models.FrontendServiceType(frontendType) {
+						index = i
+						break
+					}
+				}
+
+				if index == -1 {
+					fmt.Printf("User %s does not have frontend service %s\n", user.Email, frontendType)
+					return nil
+				}
+
+				// Remove the frontend service from the user
+				user.FrontendServices = append(user.FrontendServices[:index], user.FrontendServices[index+1:]...)
+
+				// Update the user in the database
+				err = user.Save()
+				if err != nil {
+					panic(err)
+				}
+
+				fmt.Printf("Removed frontend service %s from user %s\n", frontendUserId, user.Email)
+			} else {
+				// Check if the user already has the frontend service
+				hasFrontendService := false
+				for _, s := range user.FrontendServices {
+					if s.Type == models.FrontendServiceType(frontendType) && (s.UserID == "" || s.UserID == frontendUserId) {
+						hasFrontendService = true
+						break
+					}
+				}
+
+				if hasFrontendService {
+					fmt.Printf("User %s already has frontend service %s\n", user.Email, frontendUserId)
+				}
+
+				// Add the frontend service to the user
+				user.FrontendServices = append(user.FrontendServices, models.FrontendService{
+					Type:   models.FrontendServiceType(frontendType),
+					UserID: frontendUserId,
+				})
+
+				// Update the user in the database
+				err = user.Save()
+				if err != nil {
+					panic(err)
+				}
+
+				fmt.Printf("Added frontend service %s to user %s\n", frontendType, user.Email)
+			}
+
+			return nil
+		},
+	}
+}

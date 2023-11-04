@@ -67,6 +67,7 @@ func GetCliApp() *cli.App {
 						Usage:   "Updates a user in the system",
 						Subcommands: []*cli.Command{
 							getUserUpdatePermissionsCmd(),
+							getUserFrontendUpdateCmd(),
 						},
 					},
 				},

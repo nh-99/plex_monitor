@@ -17,19 +17,19 @@ const (
 
 // User is the struct that represents the user data that is stored in the database.
 type User struct {
-	ID              string            `bson:"id"`
-	Email           string            `bson:"email"`
-	Password        []byte            `bson:"-"`
-	HashedPassword  string            `bson:"password"`
-	FrontendService []FrontendService `bson:"frontendServices"`
-	Permissions     []PermissionType  `bson:"permissions"`
-	Activated       bool              `bson:"activated"`
-	CreatedAt       time.Time         `bson:"created_at"`
-	CreatedBy       string            `bson:"created_by"`
-	UpdatedAt       time.Time         `bson:"updated_at"`
-	UpdatedBy       string            `bson:"updated_by"`
-	DeletedAt       *time.Time        `bson:"deleted_at,omitempty"`
-	DeletedBy       *string           `bson:"deleted_by,omitempty"`
+	ID               string            `bson:"id"`
+	Email            string            `bson:"email"`
+	Password         []byte            `bson:"-"`
+	HashedPassword   string            `bson:"password"`
+	FrontendServices []FrontendService `bson:"frontendServices"`
+	Permissions      []PermissionType  `bson:"permissions"`
+	Activated        bool              `bson:"activated"`
+	CreatedAt        time.Time         `bson:"created_at"`
+	CreatedBy        string            `bson:"created_by"`
+	UpdatedAt        time.Time         `bson:"updated_at"`
+	UpdatedBy        string            `bson:"updated_by"`
+	DeletedAt        *time.Time        `bson:"deleted_at,omitempty"`
+	DeletedBy        *string           `bson:"deleted_by,omitempty"`
 }
 
 // FrontendServiceType is the type of the frontend service.
