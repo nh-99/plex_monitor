@@ -35,13 +35,18 @@ func getServiceCreateCmd() *cli.Command {
 			data := models.ServiceData{
 				ServiceName: models.ServiceType(cCtx.String("name")),
 				Config: bson.M{
-					"key":  cCtx.String("key"),
 					"host": cCtx.String("host"),
 				},
 				CreatedAt: time.Now(),
 				UpdatedAt: time.Now(),
 			}
-			err := models.CreateService(data)
+
+			err := data.EncryptAndSetKey(cCtx.String("key"))
+			if err != nil {
+				return err
+			}
+
+			err = models.CreateService(data)
 			if err != nil {
 				return err
 			}

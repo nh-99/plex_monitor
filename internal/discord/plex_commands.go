@@ -17,6 +17,7 @@ func refreshPlexLibraryHandler(s *discordgo.Session, i *discordgo.InteractionCre
 	switch i.Type {
 	case discordgo.InteractionApplicationCommand:
 		data := i.ApplicationCommandData()
+		libraryID := int(data.Options[0].IntValue())
 
 		// Get the service config from the database
 		service, err := models.GetServiceByName(models.ServiceTypePlex)
@@ -32,17 +33,38 @@ func refreshPlexLibraryHandler(s *discordgo.Session, i *discordgo.InteractionCre
 			return
 		}
 
-		// Refresh the library
-		libraryID := int(data.Options[0].IntValue())
-		plexDriver := servicerestdriver.NewPlexRestDriver("plex", config.Host, config.Key, logrus.WithField("service", "plex"))
-		err = plexDriver.ScanLibrary(libraryID)
+		// Decrypt the service key
+		plexKey, err := service.GetAndDecryptKey()
 		if err != nil {
 			respondToError(s, i, err)
 			return
 		}
 
-		// Get the library name
-		library, err := config.GetLibraryByID(libraryID)
+		// Create the Plex driver
+		plexDriver := servicerestdriver.NewPlexRestDriver("plex", config.Host, plexKey, logrus.WithField("service", "plex"))
+
+		// Get the libraries
+		libraries, err := plexDriver.GetLibraries()
+		if err != nil {
+			respondToError(s, i, fmt.Errorf("failed to get libraries: %w", err))
+			return
+		}
+
+		// Find the library
+		var library *servicerestdriver.PlexLibrary
+		for _, l := range libraries {
+			if l.Key == libraryID {
+				library = &l
+				break
+			}
+		}
+		if library == nil {
+			respondToError(s, i, fmt.Errorf("failed to find library with ID %d", libraryID))
+			return
+		}
+
+		// Refresh the library
+		err = plexDriver.ScanLibrary(library.Key)
 		if err != nil {
 			respondToError(s, i, err)
 			return
@@ -53,7 +75,7 @@ func refreshPlexLibraryHandler(s *discordgo.Session, i *discordgo.InteractionCre
 			Data: &discordgo.InteractionResponseData{
 				Content: fmt.Sprintf(
 					"Starting a rescan on the %s library",
-					library.Name,
+					library.Title,
 				),
 			},
 		})
@@ -73,25 +95,39 @@ func respondWithPlexLibraryAutocomplete(s *discordgo.Session, i *discordgo.Inter
 	// Get the service config from the database
 	service, err := models.GetServiceByName(models.ServiceTypePlex)
 	if err != nil {
-		respondToError(s, i, err)
+		logrus.Errorf("Failed to get service by name: %v", err)
 		return
 	}
 
 	// Get the config as a Plex config
 	config, err := service.GetConfigAsPlexConfig()
 	if err != nil {
-		respondToError(s, i, err)
+		logrus.Errorf("Failed to get config as plex config: %v", err)
 		return
 	}
 
-	// Get the libraries from the Plex config
-	libraries := config.Libraries
+	// Decrypt the service key
+	plexKey, err := service.GetAndDecryptKey()
+	if err != nil {
+		logrus.Errorf("Failed to decrypt service key: %v", err)
+		return
+	}
+
+	// Refresh the library
+	plexDriver := servicerestdriver.NewPlexRestDriver("plex", config.Host, plexKey, logrus.WithField("service", "plex"))
+
+	// Get the libraries
+	libraries, err := plexDriver.GetLibraries()
+	if err != nil {
+		logrus.Errorf("Failed to get libraries: %v", err)
+		return
+	}
 
 	// Add the libraries to the choices
 	for _, library := range libraries {
 		choices = append(choices, &discordgo.ApplicationCommandOptionChoice{
-			Name:  library.Name,
-			Value: fmt.Sprintf("%d", library.ID),
+			Name:  library.Title,
+			Value: library.Key,
 		})
 	}
 
@@ -102,7 +138,7 @@ func respondWithPlexLibraryAutocomplete(s *discordgo.Session, i *discordgo.Inter
 		},
 	})
 	if err != nil {
-		respondToError(s, i, err)
+		logrus.Errorf("Failed to respond to interaction: %v", err)
 		return
 	}
 }

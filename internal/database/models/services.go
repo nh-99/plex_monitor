@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"plex_monitor/internal/database"
+	"plex_monitor/internal/encryption"
 	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
@@ -37,15 +38,8 @@ type ServiceData struct {
 
 // PlexConfig is the struct that represents the Plex config.
 type PlexConfig struct {
-	Host      string        `bson:"host"`
-	Key       string        `bson:"key"`
-	Libraries []PlexLibrary `bson:"libraries"`
-}
-
-// PlexLibrary is the struct that represents the Plex library.
-type PlexLibrary struct {
-	ID   int    `bson:"id"`
-	Name string `bson:"name"`
+	Host string `bson:"host"`
+	Key  string `bson:"key"`
 }
 
 // GetAllServices returns all services.
@@ -102,13 +96,26 @@ func (s ServiceData) GetConfigAsPlexConfig() (*PlexConfig, error) {
 	return &config, nil
 }
 
-// GetLibraryByID returns a library by ID.
-func (p PlexConfig) GetLibraryByID(id int) (PlexLibrary, error) {
-	for _, library := range p.Libraries {
-		if library.ID == id {
-			return library, nil
-		}
+// EncryptAndSetKey encrypts the key and sets it on the service.
+func (s *ServiceData) EncryptAndSetKey(key string) error {
+	aesEncryption := encryption.NewAESFromSecrets()
+	encryptedKey, err := aesEncryption.EncryptStringAES(key)
+	if err != nil {
+		return err
 	}
 
-	return PlexLibrary{}, fmt.Errorf("library with id %d not found", id)
+	s.Config["key"] = encryptedKey
+
+	return nil
+}
+
+// GetAndDecryptKey returns the key for the service.
+func (s *ServiceData) GetAndDecryptKey() (string, error) {
+	aesEncryption := encryption.NewAESFromSecrets()
+	decryptedKey, err := aesEncryption.DecryptStringAES(s.Config["key"].(string))
+	if err != nil {
+		return "", fmt.Errorf("failed to decrypt service key: %w", err)
+	}
+
+	return decryptedKey, nil
 }

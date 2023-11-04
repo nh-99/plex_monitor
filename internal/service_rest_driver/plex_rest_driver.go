@@ -1,6 +1,7 @@
 package servicerestdriver
 
 import (
+	"encoding/xml"
 	"net/http"
 	"strconv"
 	"time"
@@ -54,6 +55,57 @@ func (s *PlexRestDriver) ScanLibrary(libraryID int) error {
 
 	// Execute the request
 	_, err = s.Do(req)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+type plexLibraryResponse struct {
+	XMLName   xml.Name      `xml:"MediaContainer"`
+	Directory []PlexLibrary `xml:"Directory"`
+}
+
+// PlexLibrary is the struct that represents the Plex library.
+type PlexLibrary struct {
+	XMLName          xml.Name `xml:"Directory"`
+	Key              int      `xml:"key,attr"`
+	Title            string   `xml:"title,attr"`
+	Type             string   `xml:"type,attr"`
+	ScannedAt        string   `xml:"scannedAt,attr"`
+	CreatedAt        string   `xml:"createdAt,attr"`
+	UpdatedAt        string   `xml:"updatedAt,attr"`
+	ContentChangedAt string   `xml:"contentChangedAt,attr"`
+}
+
+// GetLibraries returns all libraries.
+func (s *PlexRestDriver) GetLibraries() ([]PlexLibrary, error) {
+	// Create a new request
+	req, err := http.NewRequest(http.MethodGet, s.Host+"/library/sections", nil)
+	if err != nil {
+		return nil, err
+	}
+
+	// Execute the request
+	resp, err := s.Do(req)
+	if err != nil {
+		return nil, err
+	}
+
+	// Parse the response
+	var response plexLibraryResponse
+	err = parseXML(resp, &response)
+	if err != nil {
+		return nil, err
+	}
+
+	return response.Directory, nil
+}
+
+func parseXML(resp *http.Response, v interface{}) error {
+	// Unmarshal the response
+	err := xml.NewDecoder(resp.Body).Decode(v)
 	if err != nil {
 		return err
 	}
