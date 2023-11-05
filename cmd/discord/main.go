@@ -8,6 +8,7 @@ import (
 	"plex_monitor/internal/database"
 	"plex_monitor/internal/discord"
 	"plex_monitor/internal/secrets"
+	"plex_monitor/internal/worker"
 
 	"github.com/bwmarrin/discordgo"
 	"github.com/sirupsen/logrus"
@@ -15,7 +16,10 @@ import (
 
 // Bot parameters
 var (
-	RemoveCommands = flag.Bool("rmcmd", false, "Remove all commands after shutdowning or not")
+	RemoveCommands  = flag.Bool("rmcmd", false, "Remove all commands after shutdowning or not")
+	LogFormat       = flag.String("logformat", "text", "Log format (text or json)")
+	LogReportCaller = flag.Bool("logreportcaller", false, "Log report caller")
+	LogLevel        = flag.String("loglevel", "debug", "Log level (debug, info, warn, error, fatal, panic)")
 )
 
 var s *discordgo.Session
@@ -53,7 +57,40 @@ func init() {
 	})
 }
 
+func initLogger() {
+	switch *LogFormat {
+	case "text":
+		logrus.SetFormatter(&logrus.TextFormatter{})
+	case "json":
+	default:
+		logrus.SetFormatter(&logrus.JSONFormatter{})
+	}
+	logrus.SetOutput(os.Stdout)
+	logrus.SetReportCaller(*LogReportCaller)
+
+	switch *LogLevel {
+	case "debug":
+		logrus.SetLevel(logrus.DebugLevel)
+	case "info":
+		logrus.SetLevel(logrus.InfoLevel)
+	case "warn":
+		logrus.SetLevel(logrus.WarnLevel)
+	case "error":
+		logrus.SetLevel(logrus.ErrorLevel)
+	case "fatal":
+		logrus.SetLevel(logrus.FatalLevel)
+	case "panic":
+	default:
+		logrus.SetLevel(logrus.PanicLevel)
+	}
+}
+
 func main() {
+	initLogger()
+
+	// Run the app worker
+	worker.ExecuteCrons()
+
 	s.AddHandler(func(s *discordgo.Session, r *discordgo.Ready) {
 		logrus.Printf("Logged in as: %v#%v", s.State.User.Username, s.State.User.Discriminator)
 	})

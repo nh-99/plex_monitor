@@ -27,7 +27,7 @@ func refreshPlexLibraryHandler(s *discordgo.Session, i *discordgo.InteractionCre
 		}
 
 		// Get the config as a Plex config
-		config, err := service.GetConfigAsPlexConfig()
+		config, err := service.GetConfigAsStandardConfig()
 		if err != nil {
 			respondToError(s, i, err)
 			return
@@ -100,7 +100,7 @@ func respondWithPlexLibraryAutocomplete(s *discordgo.Session, i *discordgo.Inter
 	}
 
 	// Get the config as a Plex config
-	config, err := service.GetConfigAsPlexConfig()
+	config, err := service.GetConfigAsStandardConfig()
 	if err != nil {
 		logrus.Errorf("Failed to get config as plex config: %v", err)
 		return

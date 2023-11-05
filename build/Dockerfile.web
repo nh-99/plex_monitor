@@ -7,7 +7,7 @@ COPY go.mod go.sum ./
 RUN go mod download && go mod verify
 
 COPY . .
-RUN make
-RUN cp bin/pm-http /usr/local/bin/app && cp bin/pm-cli /usr/local/bin/pm-cli && cp bin/pm-discord /usr/local/bin/pm-discord
+RUN make http cli
+RUN cp bin/pm-http /usr/local/bin/app && cp bin/pm-cli /usr/local/bin/pm-cli
 
 CMD ["app"]

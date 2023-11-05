@@ -4,6 +4,8 @@ package discord
 
 import (
 	"plex_monitor/internal/database/models"
+	"plex_monitor/internal/worker"
+	"strings"
 
 	"github.com/bwmarrin/discordgo"
 	"github.com/sirupsen/logrus"
@@ -117,10 +119,90 @@ func healthHandler(s *discordgo.Session, i *discordgo.InteractionCreate) {
 		return
 	}
 
+	var embeds []*discordgo.MessageEmbed
+
+	// Loop through all services and get their health
+	latestHealth := worker.GetCronWorker(worker.NewHealthCronWorker().Name()).(*worker.HealthCronWorker).GetLatestHealthMap()
+	for serviceName, serviceHealth := range latestHealth {
+		// Get the service
+		service, err := models.GetServiceByName(models.ServiceType(serviceName))
+		if err != nil {
+			logrus.WithFields(logrus.Fields{
+				"error":       err,
+				"serviceName": serviceName,
+			}).Error("Failed to get service by name")
+			continue
+		}
+
+		// Get the config as a standard config
+		config, err := service.GetConfigAsStandardConfig()
+		if err != nil {
+			logrus.WithFields(logrus.Fields{
+				"error":       err,
+				"serviceName": serviceName,
+			}).Error("Failed to get config as standard config")
+			continue
+		}
+
+		healthColor := 0x00ff00
+		if !serviceHealth.Healthy {
+			healthColor = 0xff0000
+		}
+
+		status := "Healthy"
+		if !serviceHealth.Healthy {
+			status = "Unhealthy"
+		}
+
+		// Create the embed
+		embed := &discordgo.MessageEmbed{
+			URL:   config.Host,
+			Title: strings.Title(strings.ToLower(string(service.ServiceName))) + " Health",
+			Color: healthColor,
+			Thumbnail: &discordgo.MessageEmbedThumbnail{
+				URL: getImageForService(string(service.ServiceName)),
+			},
+			Fields: []*discordgo.MessageEmbedField{
+				{
+					Name:   "Status",
+					Value:  status,
+					Inline: true,
+				},
+				{
+					Name:   "Version",
+					Value:  serviceHealth.Version,
+					Inline: true,
+				},
+				{
+					Name:   "Last Checked",
+					Value:  serviceHealth.LastChecked.Format("2006-01-02 15:04:05"),
+					Inline: true,
+				},
+			},
+		}
+
+		embeds = append(embeds, embed)
+	}
+
 	s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
 		Type: discordgo.InteractionResponseChannelMessageWithSource,
 		Data: &discordgo.InteractionResponseData{
-			Content: "🟢 I'm healthy!",
+			Embeds: embeds,
 		},
 	})
+}
+
+func getImageForService(serviceName string) string {
+	switch serviceName {
+	case "plex":
+		return "https://www.plex.tv/wp-content/themes/plex/assets/img/favicons/plex-180.png"
+	case "ombi":
+		return "https://raw.githubusercontent.com/Ombi-app/Ombi/gh-pages/img/android-chrome-512x512.png"
+	case "radarr":
+		return "https://wiki.servarr.com/assets/radarr/logos/512.png"
+	case "sonarr":
+		return "https://wiki.servarr.com/assets/sonarr/logos/512.png"
+	}
+
+	return ""
 }

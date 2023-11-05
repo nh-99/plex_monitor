@@ -23,6 +23,10 @@ const (
 	ServiceTypePlex ServiceType = "plex"
 	// ServiceTypeOmbi is the type of the Ombi service.
 	ServiceTypeOmbi ServiceType = "ombi"
+	// ServiceTypeSonarr is the type of the Sonarr service.
+	ServiceTypeSonarr ServiceType = "sonarr"
+	// ServiceTypeRadarr is the type of the Radarr service.
+	ServiceTypeRadarr ServiceType = "radarr"
 )
 
 // ServiceData is the struct that represents the service data that is stored in the database.
@@ -36,8 +40,8 @@ type ServiceData struct {
 	UpdatedBy   string      `bson:"updated_by,omitempty"`
 }
 
-// PlexConfig is the struct that represents the Plex config.
-type PlexConfig struct {
+// StandardConfig is the struct that represents the Plex config.
+type StandardConfig struct {
 	Host string `bson:"host"`
 	Key  string `bson:"key"`
 }
@@ -77,9 +81,9 @@ func GetServiceByName(name ServiceType) (ServiceData, error) {
 	return service, nil
 }
 
-// GetConfigAsPlexConfig returns the config as a Plex config.
-func (s ServiceData) GetConfigAsPlexConfig() (*PlexConfig, error) {
-	var config PlexConfig
+// GetConfigAsStandardConfig returns the config as a Plex config.
+func (s ServiceData) GetConfigAsStandardConfig() (*StandardConfig, error) {
+	var config StandardConfig
 
 	// Convert the bson.M to a byte array
 	b, err := bson.Marshal(s.Config)
@@ -87,7 +91,7 @@ func (s ServiceData) GetConfigAsPlexConfig() (*PlexConfig, error) {
 		return nil, fmt.Errorf("failed to marshal config: %w", err)
 	}
 
-	// Convert the byte array to a PlexConfig
+	// Convert the byte array to a StandardConfig
 	err = bson.Unmarshal(b, &config)
 	if err != nil {
 		return nil, fmt.Errorf("failed to unmarshal config into plex config: %w", err)

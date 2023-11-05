@@ -1,7 +1,9 @@
 package servicerestdriver
 
 import (
+	"fmt"
 	"net/http"
+	"plex_monitor/internal/database/models"
 	"time"
 
 	"github.com/sirupsen/logrus"
@@ -34,6 +36,21 @@ type ServiceRestDriver struct {
 
 	// Backoff is the amount of time to wait between retries.
 	Backoff time.Duration
+}
+
+// ServiceHealth is the struct that represents the health of the service.
+type ServiceHealth struct {
+	// Healthy is whether or not the service is healthy.
+	Healthy bool `json:"healthy"`
+	// Version is the version of the service.
+	Version string `json:"version"`
+	// LastChecked is the last time the service was checked.
+	LastChecked time.Time `json:"lastChecked"`
+}
+
+// ServiceRestDriverInterface is the interface that represents the service rest driver.
+type ServiceRestDriverInterface interface {
+	GetHealth() (ServiceHealth, error)
 }
 
 // NewServiceRestDriver returns a new service rest driver.
@@ -135,4 +152,50 @@ func (s *ServiceRestDriver) ExecuteRequestSafe(req *http.Request) (*http.Respons
 
 	// Return the response
 	return resp, nil
+}
+
+// GetDriverForService returns a driver for the given service.
+func GetDriverForService(service *models.ServiceData, disableRetries bool) (ServiceRestDriverInterface, error) {
+	// Get the config as a standard config
+	config, err := service.GetConfigAsStandardConfig()
+	if err != nil {
+		return nil, err
+	}
+
+	// Get the key for the service
+	key, err := service.GetAndDecryptKey()
+	if err != nil {
+		return nil, err
+	}
+
+	// Create the driver
+	serviceName := string(service.ServiceName)
+	switch service.ServiceName {
+	case models.ServiceTypePlex:
+		driver := NewPlexRestDriver(serviceName, config.Host, key, logrus.WithField("service", serviceName))
+		if disableRetries {
+			driver.SetServiceRetries(0)
+		}
+		return driver, nil
+	case models.ServiceTypeOmbi:
+		driver := NewOmbiRestDriver(serviceName, config.Host, key, logrus.WithField("service", serviceName))
+		if disableRetries {
+			driver.SetServiceRetries(0)
+		}
+		return driver, nil
+	case models.ServiceTypeRadarr:
+		driver := NewRadarrRestDriver(serviceName, config.Host, key, logrus.WithField("service", serviceName))
+		if disableRetries {
+			driver.SetServiceRetries(0)
+		}
+		return driver, nil
+	case models.ServiceTypeSonarr:
+		driver := NewSonarrRestDriver(serviceName, config.Host, key, logrus.WithField("service", serviceName))
+		if disableRetries {
+			driver.SetServiceRetries(0)
+		}
+		return driver, nil
+	default:
+		return nil, fmt.Errorf("unknown service: %s", service.ServiceName)
+	}
 }

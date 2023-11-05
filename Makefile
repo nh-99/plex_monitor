@@ -1,6 +1,5 @@
 # List of command names (directories)
 COMMANDS := http cli discord
-registryurl := localhost\:32000
 
 # Build all commands
 build: $(COMMANDS)
@@ -32,10 +31,11 @@ build-docker:
 	@echo  ----------------------------------------
 	@echo   Git tag is: $(GIT_TAG), tagging container version
 	@echo  ----------------------------------------
-	@docker build -t $(registryurl)/plex-monitor:latest .
-	@docker build -t $(registryurl)/plex-monitor:$(GIT_TAG) .
-        @docker push $(registryurl)/plex-monitor:latest
-        @docker push $(registryurl)/plex-monitor:$(GIT_TAG)
+	@docker build -t plex-monitor:latest -f ./build/Dockerfile.web .
+	@docker build -t plex-monitor:$(GIT_TAG) -f ./build/Dockerfile.web .
+	@docker build -t plex-monitor-discord:latest -f ./build/Dockerfile.discord .
+	@docker build -t plex-monitor-discord:$(GIT_TAG) -f ./build/Dockerfile.discord .
+
 
 # Default target
 .DEFAULT_GOAL := build

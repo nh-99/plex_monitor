@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"plex_monitor/internal/database/models"
+	servicerestdriver "plex_monitor/internal/service_rest_driver"
 
 	"go.mongodb.org/mongo-driver/mongo"
 )
@@ -160,14 +161,22 @@ func (p *MediaRequestPipeline) Requested() error {
 		return err
 	}
 
+	// Setup a new Ombi driver
+	ombiDriver, err := servicerestdriver.GetDriverForService(&service, false)
+	if err != nil {
+		return fmt.Errorf("unable to get Ombi driver: %w", err)
+	}
+
 	// Retrieve the users from the media request service.
-	users, err := models.RetrieveUsersFromOmbi(service)
-	// TODO: Catch error & mark pipeline as errored.
+	users, err := ombiDriver.(*servicerestdriver.OmbiRestDriver).RetrieveUsersFromOmbi()
+	if err != nil {
+		return fmt.Errorf("unable to retrieve users from Ombi: %w", err)
+	}
 
 	// Filter the users down to the one that requested the media.
 	ombiData := p.Metadata["ombi"].(map[string]interface{})
 	userName := ombiData["userName"].(string)
-	var user models.OmbiUser
+	var user servicerestdriver.OmbiUser
 	for _, u := range users {
 		if u.UserName == userName {
 			user = u
@@ -176,7 +185,7 @@ func (p *MediaRequestPipeline) Requested() error {
 	}
 
 	// Get the user's Discord ID from the Ombi data.
-	discordID, err := models.RetrieveDiscordIDFromOmbi(service, user)
+	discordID, err := ombiDriver.(*servicerestdriver.OmbiRestDriver).RetrieveDiscordIDFromOmbi(user)
 	if err != nil {
 		return fmt.Errorf("unable to retrieve Discord ID from Ombi: %w", err)
 	}
