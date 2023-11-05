@@ -31,7 +31,7 @@ func (w *HealthCronWorker) Name() string {
 
 // GetInterval returns the interval for the worker.
 func (w *HealthCronWorker) GetInterval() time.Duration {
-	return 30 * time.Second
+	return 10 * time.Minute
 }
 
 // Do executes the worker.
