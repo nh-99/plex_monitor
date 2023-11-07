@@ -3,6 +3,7 @@ package worker
 import (
 	"plex_monitor/internal/database/models"
 	servicerestdriver "plex_monitor/internal/service_rest_driver"
+	"sort"
 	"sync"
 	"time"
 )
@@ -90,7 +91,19 @@ func (w *HealthCronWorker) Do() error {
 
 // GetLatestHealthMap returns the map of latest health checks.
 func (w *HealthCronWorker) GetLatestHealthMap() map[string]servicerestdriver.ServiceHealth {
-	return w.latestHealth
+	keys := make([]string, 0, len(w.latestHealth))
+
+	for k := range w.latestHealth {
+		keys = append(keys, k)
+	}
+	sort.Strings(keys)
+
+	tempMap := make(map[string]servicerestdriver.ServiceHealth)
+	for _, k := range keys {
+		tempMap[k] = w.latestHealth[k]
+	}
+
+	return tempMap
 }
 
 func (w *HealthCronWorker) addLatestHealth(health servicerestdriver.ServiceHealth, serviceName string) {

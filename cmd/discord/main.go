@@ -17,7 +17,7 @@ import (
 // Bot parameters
 var (
 	RemoveCommands  = flag.Bool("rmcmd", false, "Remove all commands after shutdowning or not")
-	LogFormat       = flag.String("logformat", "text", "Log format (text or json)")
+	LogFormat       = flag.String("logformat", "json", "Log format (text or json)")
 	LogReportCaller = flag.Bool("logreportcaller", false, "Log report caller")
 	LogLevel        = flag.String("loglevel", "debug", "Log level (debug, info, warn, error, fatal, panic)")
 )
