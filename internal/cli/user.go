@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/urfave/cli/v2"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 func getUserCreateCmd() *cli.Command {
@@ -28,9 +29,9 @@ func getUserCreateCmd() *cli.Command {
 				HashedPassword: s,
 				Activated:      true,
 				CreatedAt:      time.Now(),
-				CreatedBy:      models.SystemUserID,
+				CreatedBy:      primitive.NilObjectID,
 				UpdatedAt:      time.Now(),
-				UpdatedBy:      models.SystemUserID,
+				UpdatedBy:      primitive.NilObjectID,
 			})
 			if err != nil {
 				panic(err)

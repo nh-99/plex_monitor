@@ -3,13 +3,11 @@ package user
 import (
 	"encoding/json"
 	"net/http"
-	"os"
+	"plex_monitor/internal/controllers/api"
 	"plex_monitor/internal/database/models"
-	"time"
 
-	"github.com/dgrijalva/jwt-go"
-	"github.com/go-chi/jwtauth"
 	"github.com/go-chi/render"
+	"github.com/sirupsen/logrus"
 )
 
 // LoginRequest is the un-serializer for the login request body
@@ -25,8 +23,9 @@ type LoginResponse struct {
 
 // PerformLogin is the endpoint that allows a user to login
 func PerformLogin(w http.ResponseWriter, r *http.Request) {
+	l := logrus.NewEntry(logrus.StandardLogger())
+
 	var loginRequest LoginRequest
-	tokenAuth := jwtauth.New("HS256", []byte(os.Getenv("SECRET_KEY")), nil)
 	err := json.NewDecoder(r.Body).Decode(&loginRequest)
 	if err != nil {
 		http.Error(w, "Bad request data", http.StatusBadRequest)
@@ -53,7 +52,11 @@ func PerformLogin(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Encode a JWT auth token for the user
-	_, tokenString, _ := tokenAuth.Encode(jwt.MapClaims{"user_id": user.ID, "exp": jwtauth.ExpireIn(1460 * time.Hour)}) // 1460 hours == two months
+	tokenString, err := user.GetBearerToken()
+	if err != nil {
+		api.RenderError(l, w, r, err, http.StatusInternalServerError)
+		return
+	}
 	loginResponse := LoginResponse{
 		Token: tokenString,
 	}

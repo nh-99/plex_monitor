@@ -15,12 +15,16 @@ type ReadableUserPermission struct {
 var userPermissions map[string]ReadableUserPermission
 
 const (
+	// PermissionTypeGodMode is the application god mode.
+	PermissionTypeGodMode PermissionType = "pm.GOD"
 	// PermissionTypeCheckHealth is the type of the check health permission.
 	PermissionTypeCheckHealth PermissionType = "pm.check_health"
 	// PermissionTypeManageUsers is the type of the manage users permission.
 	PermissionTypeManageUsers PermissionType = "pm.manage_users"
 	// PermissionTypeScanLibrary is the type of the scan library permission.
 	PermissionTypeScanLibrary PermissionType = "pm.scan_library"
+	// PermissionTypeRequestMedia allows a user to request new media.
+	PermissionTypeRequestMedia PermissionType = "pm.request_media"
 )
 
 func init() {
@@ -39,12 +43,18 @@ func init() {
 		Description:    "Allows the user to scan the Plex libraries",
 		PermissionType: PermissionTypeScanLibrary,
 	})
+	RegisterReadableUserPermission(ReadableUserPermission{
+		Name:           "Request Media",
+		Description:    "Allows the user to request new media",
+		PermissionType: PermissionTypeRequestMedia,
+	})
 }
 
 // CheckPermission checks if the user has the supplied permission.
 func (u User) CheckPermission(permission PermissionType) bool {
 	for _, p := range u.Permissions {
-		if p == permission {
+		godMode := p == PermissionTypeGodMode // Override for "god mode"
+		if p == permission || godMode {
 			return true
 		}
 	}

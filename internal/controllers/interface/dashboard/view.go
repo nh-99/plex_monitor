@@ -4,7 +4,6 @@ import (
 	"html/template"
 	"net/http"
 	web "plex_monitor/internal/controllers/interface"
-	"plex_monitor/internal/controllers/middleware"
 	"plex_monitor/internal/database/models"
 	"strconv"
 	"time"
@@ -28,7 +27,11 @@ func ViewDashboard(w http.ResponseWriter, r *http.Request) {
 		).Info("Error ocurred parsing template")
 		return
 	}
-	user := r.Context().Value(middleware.ContextKeyUserID).(models.User)
+	user, exists := models.UserFromContext(r.Context())
+	if !exists {
+		logrus.Error("Could not get user from request context")
+		return
+	}
 	err = parsedTemplate.Execute(w, viewData{
 		AppData: web.GetAppData(&user),
 	})
@@ -66,7 +69,11 @@ func ViewActivity(w http.ResponseWriter, r *http.Request) {
 		).Info("Error ocurred parsing template")
 		return
 	}
-	user := r.Context().Value(middleware.ContextKeyUserID).(models.User)
+	user, exists := models.UserFromContext(r.Context())
+	if !exists {
+		logrus.Error("Could not get user from request context")
+		return
+	}
 
 	// Get number of results to return (limit) from request
 	limit, err := strconv.ParseInt(r.URL.Query().Get("limit"), 10, 32)

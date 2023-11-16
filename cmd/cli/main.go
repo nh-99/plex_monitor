@@ -5,11 +5,13 @@ import (
 	"os"
 
 	pmcli "plex_monitor/internal/cli"
+	"plex_monitor/internal/config"
 	"plex_monitor/internal/database"
 )
 
 func main() {
-	database.InitDB(os.Getenv("DATABASE_URL"), os.Getenv("DATABASE_NAME"))
+	conf := config.GetConfig()
+	database.InitDB(conf.Database.ConnectionString, conf.Database.Name)
 
 	fmt.Println(`
 	______ _            ___  ___            _ _             

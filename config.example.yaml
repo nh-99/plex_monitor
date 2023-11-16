@@ -1,0 +1,13 @@
+database:
+  connectionString: "mongodb://localhost:27017"
+  name: plex_monitor
+server:
+  port: 8080
+discord:
+  token: asdf1234
+logging:
+  level: debug
+  reportCaller: true
+  format: text
+environment: dev
+isProduction: false

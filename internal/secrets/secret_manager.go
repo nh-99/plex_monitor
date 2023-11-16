@@ -18,25 +18,22 @@ type SecretManagerImpl struct {
 	SecretManager SecretManager
 }
 
-// GetSecret returns the secret for the given key.
-func (smi *SecretManagerImpl) GetSecret(key string) (string, error) {
-	return smi.SecretManager.GetSecret(key)
-}
-
-// NewSecretManager creates a new SecretManager.
-func NewSecretManager(secretManager SecretManager) *SecretManagerImpl {
-	return &SecretManagerImpl{SecretManager: secretManager}
+func init() {
+	if secretManager == nil {
+		// TODO: Add support for AWS Secrets Manager
+		secretManager = NewEnvSecretManager()
+	}
 }
 
 // GetSecret returns the secret for the given key.
 func GetSecret(key string) (string, error) {
-	return secretManager.GetSecret(key)
+	return GetSecretManager().GetSecret(key)
 }
 
 // GetSecretOrDefault returns the secret for the given key or the default
 // value if the secret is not found.
 func GetSecretOrDefault(key string, defaultValue string) string {
-	return secretManager.GetSecretOrDefault(key, defaultValue)
+	return GetSecretManager().GetSecretOrDefault(key, defaultValue)
 }
 
 // secretManager is the singleton secret manager.

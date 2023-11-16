@@ -27,7 +27,7 @@ var (
 // NewAESFromSecrets returns a new AES struct with the AES key set from the secrets manager.
 func NewAESFromSecrets() *AES {
 	setupSecretsOnce.Do(func() {
-		secretsManager := secrets.NewEnvSecretManager()
+		secretsManager := secrets.GetSecretManager()
 		if secretsManager == nil {
 			logrus.Error("failed to create secrets manager")
 			return

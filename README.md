@@ -1,6 +1,11 @@
 # Plex (& co.) Monitoring
 Monitoring stack for Plex &amp; related services.
 
+# Setup
+This project uses a yaml file to configure the services that it will monitor. An example file is provided in `config.example.yml`. You can copy this file to `config.yml` and edit it to your liking. This contains connection information for the database, info for the server, and Discord bot configuration.
+
+In addition to this configuration, you need to setup a secret store. The application currently supports environment variables (`SECRET_KEY` and `AES_KEY`) to setup the JWT secret and the AES encryption secret. You can also use AWS Secrets Manager, which is the recommended way to do this in production. The application will look for the same secrets.
+
 # Running
 To create binaries to run for your platform, run `make`. To create a docker image, run `make build-docker`.
 
@@ -16,9 +21,6 @@ To create binaries to run for your platform, run `make`. To create a docker imag
 - [Requestrr](https://github.com/darkalfx/requestrr) -- alternatively, bake Discord bot into this application?
 - [Deluge](https://deluge-torrent.org/) - should be doable via bash scripts with [Plugin/Execute](https://dev.deluge-torrent.org/wiki/Plugins/Execute)
 - [Transmission](https://transmissionbt.com/) ???
-
-# Environment Variables
-The `DATABASE_URL` and `SECRET_KEY` environment variables must be set. The database URL is just the typical connection string for a Mongo database in Golang, which looks like `mongodb://user:pass@127.0.0.1:27017`. Secret key should be set specifically for your environment.
 
 # Docker
 Docker is the ideal medium for deploying this application. There is a `docker-compose.example.yml` file that outlines one way to setup these containers. You can use them with an existing compose file for the rest of the services and run them all in the same Docker network.

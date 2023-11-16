@@ -40,6 +40,19 @@ func GetCommands() []*discordgo.ApplicationCommand {
 				},
 			},
 		},
+		{
+			Name:        "request",
+			Description: "🙏 add any content you want!",
+			Type:        discordgo.ChatApplicationCommand,
+			Options: []*discordgo.ApplicationCommandOption{
+				{
+					Name:        "title",
+					Description: "The title of the content you want",
+					Type:        discordgo.ApplicationCommandOptionString,
+					Required:    true,
+				},
+			},
+		},
 	}
 }
 
@@ -49,14 +62,15 @@ func GetCommandHandlers() map[string]func(s *discordgo.Session, i *discordgo.Int
 	return map[string]func(s *discordgo.Session, i *discordgo.InteractionCreate){
 		"health":              healthHandler,
 		"rescan-plex-library": refreshPlexLibraryHandler,
+		"request":             requestMedia,
 	}
 }
 
 // userHasAccessToCommand checks if the user has access to the command.
-func userHasAccessToCommand(permissionType models.PermissionType, i *discordgo.InteractionCreate) bool {
+func userHasAccessToCommand(permissionType models.PermissionType, i *discordgo.InteractionCreate, l *logrus.Entry) (bool, *models.User) {
 	if i == nil {
 		// There is no interaction to check permissions for, so no-op
-		return false
+		return false, nil
 	}
 
 	var userID string
@@ -68,54 +82,77 @@ func userHasAccessToCommand(permissionType models.PermissionType, i *discordgo.I
 		userID = i.Member.User.ID
 	} else {
 		// There is no user to check permissions for
-		return false
+		return false, nil
 	}
 
 	user, err := models.GetUserWithFrontendUserID(userID)
 	if err != nil {
-		logrus.WithFields(logrus.Fields{
+		l.WithFields(logrus.Fields{
 			"error":         err,
 			"discordUserId": i.User.ID,
 		}).Error("Failed to get user with frontend user ID")
-		return false
+		return false, nil
 	}
 
 	if user.IsAnonymous() {
-		return false
+		l.WithFields(logrus.Fields{
+			"discordUserId": i.User.ID,
+		}).Info("User is anonymous")
+		return false, nil
 	}
 
-	return user.CheckPermission(permissionType)
+	l = l.WithFields(logrus.Fields{
+		"discordUserId":  i.User.ID,
+		"userId":         user.ID.Hex(),
+		"commandName":    i.ApplicationCommandData().Name,
+		"commandId":      i.ApplicationCommandData().ID,
+		"permissionType": permissionType,
+	})
+
+	l.Infof("User %s is performing command %s", user.Email, i.ApplicationCommandData().Name)
+
+	return user.CheckPermission(permissionType), user
 }
 
 // handleAccessOrError checks if the user has access to the command and if not
 // responds with an error message.
-func handleAccessOrError(permissionType models.PermissionType, s *discordgo.Session, i *discordgo.InteractionCreate) bool {
-	if !userHasAccessToCommand(permissionType, i) {
+func handleAccessOrError(permissionType models.PermissionType, s *discordgo.Session, i *discordgo.InteractionCreate, l *logrus.Entry) (bool, *models.User) {
+	hasAccess, user := userHasAccessToCommand(permissionType, i, l)
+	if !hasAccess {
+		l.WithFields(logrus.Fields{
+			"discordUserId":  i.User.ID,
+			"commandName":    i.ApplicationCommandData().Name,
+			"commandId":      i.ApplicationCommandData().ID,
+			"permissionType": permissionType,
+		}).Infof("User %s does not have permission to perform command %s", i.User.ID, i.ApplicationCommandData().Name)
 		s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
 			Type: discordgo.InteractionResponseChannelMessageWithSource,
 			Data: &discordgo.InteractionResponseData{
 				Content: "You don't have permission to perform this command",
 			},
 		})
-		return false
+		return false, nil
 	}
-	return true
+	return true, user
 }
 
-func respondToError(s *discordgo.Session, i *discordgo.InteractionCreate, err error) {
+func respondToError(s *discordgo.Session, i *discordgo.InteractionCreate, err error, l *logrus.Entry) {
 	s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
 		Type: discordgo.InteractionResponseChannelMessageWithSource,
 		Data: &discordgo.InteractionResponseData{
 			Content: "An error occurred while executing this command",
 		},
 	})
-	logrus.WithFields(logrus.Fields{
+	l.WithFields(logrus.Fields{
 		"error": err,
 	}).Error("An error occurred while executing this command")
 }
 
 func healthHandler(s *discordgo.Session, i *discordgo.InteractionCreate) {
-	if !handleAccessOrError(models.PermissionTypeCheckHealth, s, i) {
+	l := logrus.NewEntry(logrus.StandardLogger())
+
+	hasAccess, _ := handleAccessOrError(models.PermissionTypeCheckHealth, s, i, l)
+	if !hasAccess {
 		return
 	}
 
@@ -127,7 +164,7 @@ func healthHandler(s *discordgo.Session, i *discordgo.InteractionCreate) {
 		// Get the service
 		service, err := models.GetServiceByName(models.ServiceType(serviceName))
 		if err != nil {
-			logrus.WithFields(logrus.Fields{
+			l.WithFields(logrus.Fields{
 				"error":       err,
 				"serviceName": serviceName,
 			}).Error("Failed to get service by name")
@@ -137,7 +174,7 @@ func healthHandler(s *discordgo.Session, i *discordgo.InteractionCreate) {
 		// Get the config as a standard config
 		config, err := service.GetConfigAsStandardConfig()
 		if err != nil {
-			logrus.WithFields(logrus.Fields{
+			l.WithFields(logrus.Fields{
 				"error":       err,
 				"serviceName": serviceName,
 			}).Error("Failed to get config as standard config")
@@ -188,7 +225,7 @@ func healthHandler(s *discordgo.Session, i *discordgo.InteractionCreate) {
 		Type: discordgo.InteractionResponseChannelMessageWithSource,
 		Data: &discordgo.InteractionResponseData{
 			Embeds: embeds,
-			Flags:  EphemeralMessageFlag,
+			Flags:  discordgo.MessageFlagsEphemeral,
 		},
 	})
 }

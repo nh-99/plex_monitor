@@ -25,7 +25,7 @@ func Entry(w http.ResponseWriter, r *http.Request) {
 	serviceType := r.URL.Query().Get("service")
 
 	if r.Body == nil {
-		api.RenderError("No request body", l, w, r, nil)
+		api.RenderError(l, w, r, fmt.Errorf("the webhook body was nil"), http.StatusBadRequest)
 		return
 	}
 
@@ -37,14 +37,14 @@ func Entry(w http.ResponseWriter, r *http.Request) {
 	// Fire the hook for the given service, or return an error if the service is invalid
 	monitoringService := getService(serviceType)
 	if monitoringService.monitor == nil {
-		api.RenderError("Invalid service", l, w, r, nil)
+		api.RenderError(l, w, r, fmt.Errorf("the supplied service is invalid"), http.StatusBadRequest)
 		return
 	}
 
 	// Fire the hook
 	err := monitoringService.fireHooks(l, w, r)
 	if err != nil {
-		api.RenderError(fmt.Sprintf("There was an issue firing the webhook for service %s", serviceType), l, w, r, err)
+		api.RenderError(l, w, r, err, http.StatusInternalServerError)
 		return
 	}
 

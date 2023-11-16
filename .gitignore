@@ -19,3 +19,5 @@
 bin/
 output/
 .DS_Store
+config.yaml
+config.yml

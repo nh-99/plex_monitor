@@ -3,16 +3,11 @@ package user
 import (
 	"fmt"
 	"net/http"
-	"os"
 	web "plex_monitor/internal/controllers/interface"
-	"plex_monitor/internal/controllers/middleware"
 	"plex_monitor/internal/database/models"
 	"plex_monitor/internal/fun/inspiration"
 	"text/template"
-	"time"
 
-	"github.com/dgrijalva/jwt-go"
-	"github.com/go-chi/jwtauth"
 	"github.com/sirupsen/logrus"
 )
 
@@ -28,11 +23,9 @@ func ViewLogin(w http.ResponseWriter, r *http.Request) {
 	logrus.Info("ViewLogin route called")
 	parsedTemplate, err := template.ParseFiles("./web/html/base.html", "./web/html/user/login.html")
 	if err != nil {
-		logrus.WithFields(
-			logrus.Fields{
-				"err": err,
-			},
-		).Info("Error ocurred parsing template")
+		logrus.WithFields(logrus.Fields{
+			"err": err,
+		}).Info("Error ocurred parsing template")
 		return
 	}
 	view := loginView{
@@ -41,11 +34,9 @@ func ViewLogin(w http.ResponseWriter, r *http.Request) {
 	}
 	err = parsedTemplate.Execute(w, view)
 	if err != nil {
-		logrus.WithFields(
-			logrus.Fields{
-				"err": err,
-			},
-		).Info("Error executing template")
+		logrus.WithFields(logrus.Fields{
+			"err": err,
+		}).Info("Error executing template")
 		return
 	}
 }
@@ -62,39 +53,34 @@ func PerformLogin(w http.ResponseWriter, r *http.Request) {
 	email := r.Form.Get("email")
 	password := r.Form.Get("password")
 
-	logrus.WithFields(
-		logrus.Fields{
-			"email":    email,
-			"password": password,
-		},
-	).Info("PerformLogin route called")
+	logrus.WithFields(logrus.Fields{
+		"email": email,
+	}).Info("PerformLogin route called")
 
 	// Check if the user exists
 	user, err := models.GetUser("", email)
 	if err != nil {
-		logrus.WithFields(
-			logrus.Fields{
-				"err": err,
-			},
-		).Info("Error getting user")
+		logrus.WithFields(logrus.Fields{
+			"err": err,
+		}).Info("Error getting user")
 		handleUnauthorized(w)
 		return
 	}
 
 	// Check if the password is correct
 	if !user.CheckPassword(password) {
-		logrus.WithFields(
-			logrus.Fields{
-				"err": err,
-			},
-		).Info("Invalid password supplied")
+		logrus.WithFields(logrus.Fields{
+			"err": err,
+		}).Info("Invalid password supplied")
 		handleUnauthorized(w)
 		return
 	}
 
 	// Set jwt cookie
-	tokenAuth := jwtauth.New("HS256", []byte(os.Getenv("SECRET_KEY")), nil)
-	_, tokenString, _ := tokenAuth.Encode(jwt.MapClaims{middleware.ClaimsUserIDKey: user.ID, "exp": jwtauth.ExpireIn(1460 * time.Hour)}) // 1460 hours == two months
+	tokenString, err := user.GetBearerToken()
+	if err != nil {
+		logrus.WithError(err).Error("Could not get the bearer token")
+	}
 	w.Header().Set("Set-Cookie", fmt.Sprintf("jwt=%s; HttpOnly; SameSite=Strict; Path=/;", tokenString))
 
 	// Redirect to the dashboard
@@ -108,11 +94,9 @@ func handleUnauthorized(w http.ResponseWriter) {
 	// Render the login page again
 	parsedTemplate, err := template.ParseFiles("./web/html/base.html", "./web/html/user/login.html")
 	if err != nil {
-		logrus.WithFields(
-			logrus.Fields{
-				"err": err,
-			},
-		).Info("Error ocurred parsing template")
+		logrus.WithFields(logrus.Fields{
+			"err": err,
+		}).Info("Error ocurred parsing template")
 		return
 	}
 	view := loginView{

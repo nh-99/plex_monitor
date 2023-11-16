@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"os"
+	"plex_monitor/internal/config"
 	"plex_monitor/internal/database"
 	"plex_monitor/internal/database/models"
 	"testing"
@@ -20,8 +21,10 @@ func setup() {
 	// Init logging
 	logrus.SetReportCaller(true)
 	logrus.SetLevel(logrus.DebugLevel)
+	// Get config
+	conf := config.GetConfig()
 	// Initialize the database
-	database.InitDB(os.Getenv("DATABASE_URL"), "plex_monitor_test")
+	database.InitDB(conf.Database.ConnectionString, "plex_monitor_test")
 }
 
 func teardown() {

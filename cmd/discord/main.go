@@ -2,12 +2,11 @@ package main
 
 import (
 	"flag"
-	"fmt"
 	"os"
 	"os/signal"
+	"plex_monitor/internal/config"
 	"plex_monitor/internal/database"
 	"plex_monitor/internal/discord"
-	"plex_monitor/internal/secrets"
 	"plex_monitor/internal/worker"
 
 	"github.com/bwmarrin/discordgo"
@@ -27,20 +26,15 @@ var s *discordgo.Session
 func init() { flag.Parse() }
 
 func init() {
-	var secretManager secrets.SecretManager
-	secretManager = secrets.NewEnvSecretManager()
+	conf := config.GetConfig()
 
-	botToken, err := secretManager.GetSecret("DISCORD_BOT_TOKEN")
-	if err != nil {
-		logrus.Fatalf("Invalid bot parameters: %v", err)
-		panic(fmt.Errorf("invalid bot parameters: %v", err))
-	}
-	s, err = discordgo.New("Bot " + botToken)
+	var err error
+	s, err = discordgo.New("Bot " + conf.Discord.Token)
 	if err != nil {
 		logrus.Fatalf("Invalid bot parameters: %v", err)
 	}
 
-	database.InitDB(secretManager.GetSecretOrDefault("DATABASE_URL", ""), secretManager.GetSecretOrDefault("DATABASE_NAME", ""))
+	database.InitDB(conf.Database.ConnectionString, conf.Database.Name)
 }
 
 var (

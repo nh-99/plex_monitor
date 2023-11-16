@@ -2,10 +2,13 @@ package main
 
 import (
 	"compress/flate"
+	"fmt"
 	"net/http"
 	"os"
 
+	"plex_monitor/internal/config"
 	"plex_monitor/internal/controllers/api/firehose"
+	mediarequest "plex_monitor/internal/controllers/api/media_request"
 	"plex_monitor/internal/controllers/api/user"
 	"plex_monitor/internal/controllers/api/webhook"
 	"plex_monitor/internal/controllers/interface/dashboard"
@@ -20,8 +23,6 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-var log logrus.FieldLogger
-
 func routes() *chi.Mux {
 	router := chi.NewRouter()
 	router.Use(
@@ -35,10 +36,10 @@ func routes() *chi.Mux {
 			AllowCredentials: false,
 			MaxAge:           300, // Maximum value not ignored by any of major browsers
 		}),
-		logger.Logger("router", log),                  // Log API request calls
-		middleware.Compress(flate.DefaultCompression), // Compress results, mostly gzipping assets and json
-		middleware.RedirectSlashes,                    // Redirect slashes to no slash URL versions
-		middleware.Recoverer,                          // Recover from panics without crashing server
+		logger.Logger("router", logrus.StandardLogger()), // Log API request calls
+		middleware.Compress(flate.DefaultCompression),    // Compress results, mostly gzipping assets and json
+		middleware.RedirectSlashes,                       // Redirect slashes to no slash URL versions
+		middleware.Recoverer,                             // Recover from panics without crashing server
 	)
 
 	router.Route("/api/v1", func(r chi.Router) {
@@ -48,6 +49,7 @@ func routes() *chi.Mux {
 		)
 
 		r.Mount("/firehose", firehose.Routes())
+		r.Mount("/request", mediarequest.Routes())
 		r.Mount("/users", user.Routes())
 		r.Mount("/webhook", webhook.Routes())
 
@@ -65,23 +67,25 @@ func routes() *chi.Mux {
 }
 
 func initLogger() {
-	logrus.SetFormatter(&logrus.JSONFormatter{})
-	logrus.SetOutput(os.Stdout)
-	logrus.SetLevel(logrus.DebugLevel)
-	logrus.SetReportCaller(true)
-	log = &logrus.Logger{
-		Out:          os.Stdout,
-		Formatter:    new(logrus.JSONFormatter),
-		Level:        logrus.DebugLevel,
-		ExitFunc:     os.Exit,
-		ReportCaller: false,
+	conf := config.GetConfig()
+	switch conf.Logging.Format {
+	case "text":
+		logrus.SetFormatter(&logrus.TextFormatter{})
+	case "json":
+	default:
+		logrus.SetFormatter(&logrus.JSONFormatter{})
 	}
+	logrus.SetOutput(os.Stdout)
+	logrus.SetReportCaller(conf.Logging.ReportCaller)
+
+	logrus.SetLevel(conf.Logging.GetLogrusLevel())
 }
 
 func main() {
 	initLogger()
 	router := routes()
-	database.InitDB(os.Getenv("DATABASE_URL"), os.Getenv("DATABASE_NAME"))
+	conf := config.GetConfig()
+	database.InitDB(conf.Database.ConnectionString, conf.Database.Name)
 
 	logrus.Info("Starting Plex Monitor Web...")
 
@@ -93,5 +97,5 @@ func main() {
 		logrus.Panicf("Logging err: %s\n", err.Error()) // panic if there is an error
 	}
 
-	logrus.Fatal(http.ListenAndServe(":8080", router)) // Note, the port is usually gotten from the environment.
+	logrus.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", conf.Server.Port), router))
 }

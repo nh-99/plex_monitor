@@ -1,4 +1,4 @@
-package user
+package mediarequest
 
 import (
 	"plex_monitor/internal/config"
@@ -12,20 +12,16 @@ import (
 func Routes() *chi.Mux {
 	router := chi.NewRouter()
 	globals := config.GetGlobals()
-	tokenAuth := globals.JWTAuth
 
 	// Protected endpoints
 	router.Group(func(r chi.Router) {
 		// Seek, verify and validate JWT tokens
-		r.Use(jwtauth.Verifier(tokenAuth))
+		r.Use(jwtauth.Verifier(globals.JWTAuth))
 
 		// Custom middleware for X to add user to request context, for easy access
 		r.Use(middleware.CreateUserContext)
-	})
 
-	// Public endpoints
-	router.Group(func(r chi.Router) {
-		r.Post("/login", PerformLogin)
+		r.Post("/create", PerformMediaRequest)
 	})
 
 	return router

@@ -15,17 +15,19 @@ type StatusResponse struct {
 }
 
 // RenderError is a helper function to render an error response and log the error.
-func RenderError(errorMessage string, l *logrus.Entry, w http.ResponseWriter, r *http.Request, err error) StatusResponse {
+func RenderError(l *logrus.Entry, w http.ResponseWriter, r *http.Request, err error, status int) StatusResponse {
 	// Log the error
-	l.WithFields(logrus.Fields{
-		"error": err,
-	}).Errorf("Encountered error with request: %s", errorMessage)
+	l.WithError(err).WithFields(logrus.Fields{
+		"status": status,
+		"method": r.Method,
+		"path":   r.URL.Path,
+	}).Error("Encountered error with request")
 
 	response := StatusResponse{}
 
 	// Construct the response
 	response.Status = "error"
-	response.Message = errorMessage
+	response.Message = err.Error()
 	response.Success = false
 	w.WriteHeader(http.StatusBadRequest)
 
